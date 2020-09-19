@@ -1,0 +1,377 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>关于 WEB API 设计的一些思考 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="临近开学，有些懈怠了，并没有动力写新文章，自上次发布新文章已经过了好几天，其实也是在思考要写一篇什么样的文章，这些天也查阅了一些文章，这次打算发布一篇不那么关注具体技术实现的文章，基于以前自己关于网站对外提供数据服务 API 的思考和一些前辈写的博文，我们就来聊一聊关于一种流行的API设计风格 - RESTful API，我不敢说自己对这种设计风格有很深的理解，本文也不具有任何权威性，请科学的对待">
+<meta property="og:type" content="article">
+<meta property="og:title" content="关于 WEB API 设计的一些思考">
+<meta property="og:url" content="http://example.com/2018/09/03/guan-yu-web-api-she-ji-de-yi-xie-si-kao/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="临近开学，有些懈怠了，并没有动力写新文章，自上次发布新文章已经过了好几天，其实也是在思考要写一篇什么样的文章，这些天也查阅了一些文章，这次打算发布一篇不那么关注具体技术实现的文章，基于以前自己关于网站对外提供数据服务 API 的思考和一些前辈写的博文，我们就来聊一聊关于一种流行的API设计风格 - RESTful API，我不敢说自己对这种设计风格有很深的理解，本文也不具有任何权威性，请科学的对待">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2018-09-03T11:17:15.000Z">
+<meta property="article:modified_time" content="2019-09-24T05:43:39.000Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="API design">
+<meta property="article:tag" content="software architecture">
+<meta property="article:tag" content="RESTful API">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-guan-yu-web-api-she-ji-de-yi-xie-si-kao" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2018/09/03/guan-yu-web-api-she-ji-de-yi-xie-si-kao/" class="article-date">
+  <time datetime="2018-09-03T11:17:15.000Z" itemprop="datePublished">2018-09-03</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      关于 WEB API 设计的一些思考
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>临近开学，有些懈怠了，并没有动力写新文章，自上次发布新文章已经过了好几天，其实也是在思考要写一篇什么样的文章，这些天也查阅了一些文章，这次打算发布一篇不那么关注具体技术实现的文章，基于以前自己关于网站对外提供数据服务 API 的思考和一些前辈写的博文，我们就来聊一聊关于一种流行的API设计风格 - RESTful API，我不敢说自己对这种设计风格有很深的理解，本文也不具有任何权威性，请科学的对待任何不是标准的东西，借鉴和怀疑，切勿照搬。</p>
+<a id="more"></a>
+
+<h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><p>在博主早期的 web 开发经验中，对于需要提供对外数据服务，或者是有多端用户时( browser，APP ) 对于此种需求只是简单使用 HTTP GET / POST 来请求数据，用 URL 来描诉操作和操作的资源，通常会得出如下接口:</p>
+<blockquote>
+<p> POST api.example.com/createUser 创建一个用</p>
+<p> GET  api.example.com/createUser?username=a&amp;age=12 创建一个用户</p>
+</blockquote>
+<blockquote>
+<p>GET  api.example.com/findUserById?userId=1 获取特定 id 的用户</p>
+<p>POST api.example.com/findUserById?userId=1 获取特定 id 的用户</p>
+</blockquote>
+<p>这样设计的 API 大多数时候并不关心客户端使用的是那种 HTTP method 因为它是根据 URL 来确定操作，实际上也只是 API 消费端根据 URL 猜测接口的操作，如果没有明确的 API 文档来指出此接口执行何种操作，将是难以理解的，而你总是很难找到愿意仔仔细细写文档的程序员 : ) ，而且参数的传递同时可通过 request body 或者 query string，这就造成一种不统一，这样的设计使用体验很差，表意不明，不具有自描诉性，如何设计更好的 API 更易于使用的 API 对消费端友好的 API，这些问题困扰着博主，因为博主那时候还是个萌新，也没有很丰富的开发经验，一直思考了很久，也没有很好的答案，在展开讲新的设计风格之前先来讨论一下其他与 API 设计密切相关的东西。</p>
+<h1 id="Resource"><a href="#Resource" class="headerlink" title="Resource"></a>Resource</h1><p>我们知道一定是因为有其他的消费端希望能够使用或者消费我们保存在服务器上的数据和服务，所以才需要我们提供一个友好的方式让其通过指定的接口和后端服务进行交互，使用或者消费的东西我们把它称为 <strong>Resource</strong>，即 “资源”，所谓资源就是存在服务器一些数据或一个服务，对于 Resource 定义不是局限于某一特定的东西，资源可以是一个 html 文件，一个 js 脚本文件，一张图片，一个视频，一个可以查询天气情况的服务，可以是任何东西，我们这里讨论 API design 说的的是基于 HTTP 协议构建的 WEB API ，关于资源的描诉在 <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/info/rfc7231">RFC7231</a> 中是这样说的:</p>
+<blockquote>
+<p>The target of an HTTP request is called a “resource”.  HTTP does not limit the nature of a resource; it merely defines an interface that might be used to interact with resources.</p>
+</blockquote>
+<h1 id="URL"><a href="#URL" class="headerlink" title="URL"></a>URL</h1><p>前面说设计开放 API  的目的就是为了提供一种方式使得在服务器上的资源能被其他使用者使用，由于资源都是保存在一个网络主机中，同在一个互联网内的任何人都能在被允许的情况下获取主机上的资源，这样我们就需要有一个绝对的资源地址来标记一个存在的资源，并通过地址对资源操作，这就像我们自己的家庭地址一样，在地球上是一个唯一绝对的地址，在基于网络的架构中我们把用于定位资源的地址称为 <strong>统一资源定位符（URL）</strong>，英文是 <strong>Uniform Resource Locator</strong>，通过这样一个协议来表示网络上的资源地址，这就是我们常说的 “网址”，”网页地址”，经过 W3C 工作组制定的规范文件位于 <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1738">RFC1738</a>，一个标准的资源地址用 URL 可以简单的表示为: <strong>协议类型+主机地址+端口号+资源路径+资源名</strong>，如一个网页文档的地址: <a target="_blank" rel="noopener" href="http://api.example.com/resources/index.html%EF%BC%8C%E8%A1%A8%E7%A4%BA%E4%B8%80%E4%B8%AA%E7%BD%91%E9%A1%B5%E6%96%87%E4%BB%B6%E5%9C%A8%E4%B8%80%E4%B8%AA%E5%90%8D%E4%B8%BA">http://api.example.com:80/resources/index.html，表示一个网页文件在一个名为</a> api.example.com 的网络主机上且资源路径在 /resources 下的 index.html 文件。</p>
+<h1 id="HTTP"><a href="#HTTP" class="headerlink" title="HTTP"></a>HTTP</h1><p>在经过前面两个章节的讨论后，现在可以明确的得出两个关于 API 设计的抽象概念，即：<strong>资源</strong> 和 <strong>资源地址的表示方法</strong>，即使如此，还是不能构建一个可以确保通信双方都能互相理解各自意图并作出应答的环境，还需要有一个协议来明确通信过程中的各种意图的表达和消息的传递，因此引入 Hypertext Transfer Protocol ( HTTP )，即超文本传输协议，参与通信的双方以协议中约定的格式进行交互，操作资源，HTTP 定义了服务器和客户端的交互方式，消息格式，资源操作的各种约定，下面之展开讲请求方法的内容。</p>
+<h2 id="Request-Methods-在资源操作上的语义"><a href="#Request-Methods-在资源操作上的语义" class="headerlink" title="Request Methods 在资源操作上的语义"></a>Request Methods 在资源操作上的语义</h2><p>每一个由客户端发起的 http 请求都必须包含一个指明 request method 值的字段用来表明期望服务器对资源执行何种操作，通常，我们使用有限的几个请求方法把其映射到对资源的操作上，如下表所示，使用四个请求方法即可映射到资源的 增删改查 四个基本操作上。</p>
+<table>
+<thead>
+<tr>
+<th>Method</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>GET</td>
+<td>请求获取服务器上的一个资源</td>
+</tr>
+<tr>
+<td>POST</td>
+<td>在服务器上创建并保存一个资源</td>
+</tr>
+<tr>
+<td>PUT</td>
+<td>更新一个服务器资源，客户端必须提供资源的所有属性</td>
+</tr>
+<tr>
+<td>PATCH</td>
+<td>更新一个资源，客户端仅提供资源变化的属性</td>
+</tr>
+<tr>
+<td>DELETE</td>
+<td>删除服务器上的资源</td>
+</tr>
+</tbody></table>
+<h2 id="HTTP-关于请求的资源状态的响应约定"><a href="#HTTP-关于请求的资源状态的响应约定" class="headerlink" title="HTTP 关于请求的资源状态的响应约定"></a>HTTP 关于请求的资源状态的响应约定</h2><p>在操作资源的过程中并不是一扇风顺的得以完成操作，也有可能发生不可意料的错误，例如我们请求获取一个不存在的资源，或者更新一个不存在的资源属性，或者服务器处理超时，不允许对该资源进行的操作等等，这就需要有一个错误类型及相应给客户端的机制，在 HTTP 中此类机制叫做 response code，服务器的响应消息中会包含一个数字的值和一个简短的状态描述文字，常用的一些状态码又如下几个：</p>
+<table>
+<thead>
+<tr>
+<th>code</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>200</td>
+<td>服务器成功接收请求并返回请求的资源</td>
+</tr>
+<tr>
+<td>201</td>
+<td>服务器创建或修改资源并保存成功</td>
+</tr>
+<tr>
+<td>204</td>
+<td>删除资源成功</td>
+</tr>
+<tr>
+<td>400</td>
+<td>请求错误，服务器没有对资源执行任何操作</td>
+</tr>
+<tr>
+<td>401</td>
+<td>未授权的操作，表示客户端没有相应的权限执行此操作</td>
+</tr>
+<tr>
+<td>404</td>
+<td>表示请求操作的资源不存在</td>
+</tr>
+<tr>
+<td>500</td>
+<td>服务器内部发生错误，客户端无法判断是否操作成功</td>
+</tr>
+</tbody></table>
+<h1 id="新的-API-设计风格"><a href="#新的-API-设计风格" class="headerlink" title="新的 API 设计风格"></a>新的 API 设计风格</h1><p>经过上面的讨论，我们可以利用现有的定义和规范来设计一种新的 API 风格，一种自描述，语义明确的 API，简单说就是 URL 只定位资源不表明操作，API 对资源操作由 HTTP 请求方法动词来指代，则可以得出以下形式的接口，假设我们要对动物园的动物进行管理：</p>
+<table>
+<thead>
+<tr>
+<th>resource</th>
+<th>http method</th>
+<th>url</th>
+<th>operator</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>全体动物</td>
+<td>GET</td>
+<td>api.example.com/animals</td>
+<td>获取所有的动物列表</td>
+</tr>
+<tr>
+<td>狮子</td>
+<td>GET</td>
+<td>api.example.com/animals/lions</td>
+<td>获取所有的狮子列表</td>
+</tr>
+<tr>
+<td>狮子</td>
+<td>POST</td>
+<td>api.example.com/animals/lions</td>
+<td>新建并保存一个新的狮子，属性参数在 request body 指定</td>
+</tr>
+<tr>
+<td>狮子</td>
+<td>GET</td>
+<td>api.example.com/animals/lions/1</td>
+<td>获取指定的id为 1的狮子</td>
+</tr>
+<tr>
+<td>狮子</td>
+<td>DELETE</td>
+<td>api.example.com/animals/lions/1</td>
+<td>删除指定的狮子</td>
+</tr>
+<tr>
+<td>狮子</td>
+<td>PUT</td>
+<td>api.example.com/animals/lions/1</td>
+<td>更新指定的狮子属性，参数在request body设置，必须提供所有属性，即使不变化的属性</td>
+</tr>
+</tbody></table>
+<p>以上操作结果均由 http response code 来确认最终的结果，然后响应信息可以附加在 response body 中。比如在 api.example.com/animals/lions/1 这个接口使用 GET 请求如果不存在 id 为 1 的资源则需要返回 404 状态码，如果存在且有权限读取返回 200，在 response body 写入资源并返回给客户端。</p>
+<h1 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h1><p><strong>这篇文章很粗糙,这篇文章很粗糙，因为博主开学了:( 数学好难，不敢挂科，不知道以后还有没有精力写新文章吧，想要查阅更详细的信息请看下面的参考链接</strong></p>
+<h1 id="参考资料"><a href="#参考资料" class="headerlink" title="参考资料"></a>参考资料</h1><p>URL : <a target="_blank" rel="noopener" href="https://tools.ietf.org/html/rfc1738">RFC1738</a></p>
+<p>REST :  <a target="_blank" rel="noopener" href="https://github.com/aisuhua/restful-api-design-references/blob/master/%E6%9E%B6%E6%9E%84%E9%A3%8E%E6%A0%BC%E4%B8%8E%E5%9F%BA%E4%BA%8E%E7%BD%91%E7%BB%9C%E7%9A%84%E8%BD%AF%E4%BB%B6%E6%9E%B6%E6%9E%84%E8%AE%BE%E8%AE%A1.pdf">架构风格与基于网络的软件架构设计</a></p>
+<p>HTTP/1.1 Semantics and Content :  <a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc/rfc7231.txt">RFC7231</a></p>
+<p>GitHub repo : <a target="_blank" rel="noopener" href="https://github.com/aisuhua/restful-api-design-references">restful-api-design-references</a></p>
+<p>Wiki : <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A1%A8%E7%8E%B0%E5%B1%82%E7%8A%B6%E6%80%81%E8%BD%AC%E6%8D%A2">表现层状态转移</a></p>
+<p>​    </p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2018/09/03/guan-yu-web-api-she-ji-de-yi-xie-si-kao/" data-id="ckf9ei7g5000qdq6l5eew3esa" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/API-design/" rel="tag">API design</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/RESTful-API/" rel="tag">RESTful API</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/software-architecture/" rel="tag">software architecture</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/03/02/ji-zhu-lei-rss-yuan-fen-xiang/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          技术类 RSS 源分享
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2018/08/27/asynchronous-javascript-and-xml-ajax-xiang-jie/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">Asynchronous JavaScript and XML (AJAX) 详解</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AJAX/" rel="tag">AJAX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/API-design/" rel="tag">API design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor-Model/" rel="tag">Actor Model</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/" rel="tag">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSP/" rel="tag">CSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RESTful-API/" rel="tag">RESTful API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSS/" rel="tag">RSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vertx/" rel="tag">Vertx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-architecture/" rel="tag">software architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9A%E5%BE%92/" rel="tag">囚徒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag">科学上网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag">编译原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag">词法分析</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/API-design/" style="font-size: 10px;">API design</a> <a href="/tags/Actor-Model/" style="font-size: 10px;">Actor Model</a> <a href="/tags/Angular/" style="font-size: 10px;">Angular</a> <a href="/tags/CSP/" style="font-size: 10px;">CSP</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/RESTful-API/" style="font-size: 10px;">RESTful API</a> <a href="/tags/RSS/" style="font-size: 10px;">RSS</a> <a href="/tags/Vertx/" style="font-size: 10px;">Vertx</a> <a href="/tags/software-architecture/" style="font-size: 10px;">software architecture</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/web/" style="font-size: 20px;">web</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 20px;">前端</a> <a href="/tags/%E5%9B%9A%E5%BE%92/" style="font-size: 10px;">囚徒</a> <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">并发编程</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 10px;">科学上网</a> <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" style="font-size: 10px;">编译原理</a> <a href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" style="font-size: 10px;">词法分析</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/09/19/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/IOTyea0H9/">Vertx 与 Actor Model 浅谈</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/30/j5UFidrfC/">JDK Dynamic Proxy</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/28/git-fork-sync/">Git 保持 fork 仓库和原始仓库同步更新</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/24/about/">关于我</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

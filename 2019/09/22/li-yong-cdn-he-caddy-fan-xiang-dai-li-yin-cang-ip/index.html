@@ -1,0 +1,259 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>利用 CDN 和 Caddy 反向代理隐藏IP | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="​    在某些时候我们希望自己的服务器真实 IP 地址能够对访问者或者流量探测应用隐藏，不希望直接暴露，或者在某些网络环境中当前 IP 的流量被重置拦截导致我们无法正常使用此服务器提供的服务，本文即描述一种办法可以达成我们前文所述的需求，按照此办法不一定能优化网络传输速度，还有可能会拖慢原有的速度，这取决与你所选择的服务提供商。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="利用 CDN 和 Caddy 反向代理隐藏IP">
+<meta property="og:url" content="http://example.com/2019/09/22/li-yong-cdn-he-caddy-fan-xiang-dai-li-yin-cang-ip/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="​    在某些时候我们希望自己的服务器真实 IP 地址能够对访问者或者流量探测应用隐藏，不希望直接暴露，或者在某些网络环境中当前 IP 的流量被重置拦截导致我们无法正常使用此服务器提供的服务，本文即描述一种办法可以达成我们前文所述的需求，按照此办法不一定能优化网络传输速度，还有可能会拖慢原有的速度，这取决与你所选择的服务提供商。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://zgm.life/post-images/1569306072827.png">
+<meta property="og:image" content="https://zgm.life/post-images/1569306086567.png">
+<meta property="og:image" content="https://zgm.life/post-images/1569306094694.png">
+<meta property="article:published_time" content="2019-09-22T12:41:10.000Z">
+<meta property="article:modified_time" content="2019-10-03T15:48:06.000Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="科学上网">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://zgm.life/post-images/1569306072827.png">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-li-yong-cdn-he-caddy-fan-xiang-dai-li-yin-cang-ip" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/09/22/li-yong-cdn-he-caddy-fan-xiang-dai-li-yin-cang-ip/" class="article-date">
+  <time datetime="2019-09-22T12:41:10.000Z" itemprop="datePublished">2019-09-22</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      利用 CDN 和 Caddy 反向代理隐藏IP
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>​    在某些时候我们希望自己的服务器真实 IP 地址能够对访问者或者流量探测应用隐藏，不希望直接暴露，或者在某些网络环境中当前 IP 的流量被重置拦截导致我们无法正常使用此服务器提供的服务，本文即描述一种办法可以达成我们前文所述的需求，按照此办法不一定能优化网络传输速度，还有可能会拖慢原有的速度，这取决与你所选择的服务提供商。</p>
+<a id="more"></a>
+
+<h2 id="STEP-1-CDN-服务配置"><a href="#STEP-1-CDN-服务配置" class="headerlink" title="STEP 1 CDN 服务配置"></a>STEP 1 CDN 服务配置</h2><p>CDN 服务有很多家可选，为了方便和实惠这里文章选用 <a target="_blank" rel="noopener" href="https://www.cloudflare.com/cdn/">Cloudflare</a> 家提供的免费版套餐，当然也可以使用别家的CDN 服务，注册账号完成后就可以把我们的域名绑定到其 NameServer 之下，如下：</p>
+<p><img src="https://zgm.life/post-images/1569306072827.png"></p>
+<p>完成如上设置需要登录到你的域名提供商控制台修改 NameServer 为 Cloudflare 提供的地址，并添加 DNS记录，点击蓝色的小云朵为 Proxied转态就可完成第一步，另外由于Cloudflare 支持的转发协议比较多有 HTTP2、websocket 等，强烈建议配合 TLS 使用增加传输安全性。</p>
+<h2 id="STEP-2-服务器上配置-Caddy-反向代理"><a href="#STEP-2-服务器上配置-Caddy-反向代理" class="headerlink" title="STEP 2 服务器上配置 Caddy 反向代理"></a>STEP 2 服务器上配置 Caddy 反向代理</h2><p><a target="_blank" rel="noopener" href="https://github.com/caddyserver/caddy">Caddy</a> 是一个 Golang 写成的 web 服务器，支持自动申请 SSL 证书，支持转发流量，因此我们使用它来完成转发 CDN 服务过来的流量并转发到相应的后端服务内进一步处理，由于 Caddy 需要监听服务器上的 443 和 80 端口请确保这两个端口没有被占用，跟随下面的步骤安装 Caddy</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="https://caddyserver.com/download">Download Caddy</a> and put it in your PATH.</li>
+<li><code>cd</code> to your website’s directory.</li>
+<li>Run <code>caddy</code>.</li>
+</ol>
+<p>接下来我们还需要编写一个配置文件以启用我们的域名和自动 SSL 证书申请，在你喜欢的目录下创建一个名为 Caddyfile 的文件，并输入如下内容：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">mydomain.me &#x2F;&#x2F;这里是你的域名</span><br><span class="line">&#123;</span><br><span class="line">  log .&#x2F;caddy.log</span><br><span class="line">  proxy &#x2F;ray localhost:10000 &#123; &#x2F;&#x2F;这里配置转发websocke 协议的流量到内网 10000 端口的应用上</span><br><span class="line">    websocket</span><br><span class="line">    header_upstream -Origin</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>编写完成后运行 <strong>caddy -conf ../path/to/Caddyfile</strong> 指定配置文件，成功启动 caddy 服务后就可以完成配置，此时通过浏览器访问 <a target="_blank" rel="noopener" href="https://mydomain.me/">https://mydomain.me</a> 就会收到一个 badrequest 的响应我们的内网服务就可以伪装成为一个 http server。</p>
+<p><img src="https://zgm.life/post-images/1569306086567.png"></p>
+<p>关于 caddy 能转发的协议流量参见 <a target="_blank" rel="noopener" href="https://caddyserver.com/docs/proxy">http.proxy</a>，当然了还要取决于你要转发到的应用是否能处理这个流量。</p>
+<h2 id="STEP-3-Happy-ending"><a href="#STEP-3-Happy-ending" class="headerlink" title="STEP 3 Happy ending"></a>STEP 3 Happy ending</h2><p>经过如上配置，我们便达成了前文所说的目标，此时我们的流量路径应该是这样子的：</p>
+<p><img src="https://zgm.life/post-images/1569306094694.png"></p>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/09/22/li-yong-cdn-he-caddy-fan-xiang-dai-li-yin-cang-ip/" data-id="ckf9ei7g8000vdq6ldoued1ia" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag">科学上网</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/09/24/about/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          关于我
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/08/25/vscode-remote-yuan-cheng-kai-fa-ti-yan-bao-gao/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">vscode remote 远程开发体验报告</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AJAX/" rel="tag">AJAX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/API-design/" rel="tag">API design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor-Model/" rel="tag">Actor Model</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/" rel="tag">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSP/" rel="tag">CSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RESTful-API/" rel="tag">RESTful API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSS/" rel="tag">RSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vertx/" rel="tag">Vertx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-architecture/" rel="tag">software architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9A%E5%BE%92/" rel="tag">囚徒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag">科学上网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag">编译原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag">词法分析</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/API-design/" style="font-size: 10px;">API design</a> <a href="/tags/Actor-Model/" style="font-size: 10px;">Actor Model</a> <a href="/tags/Angular/" style="font-size: 10px;">Angular</a> <a href="/tags/CSP/" style="font-size: 10px;">CSP</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/RESTful-API/" style="font-size: 10px;">RESTful API</a> <a href="/tags/RSS/" style="font-size: 10px;">RSS</a> <a href="/tags/Vertx/" style="font-size: 10px;">Vertx</a> <a href="/tags/software-architecture/" style="font-size: 10px;">software architecture</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/web/" style="font-size: 20px;">web</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 20px;">前端</a> <a href="/tags/%E5%9B%9A%E5%BE%92/" style="font-size: 10px;">囚徒</a> <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">并发编程</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 10px;">科学上网</a> <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" style="font-size: 10px;">编译原理</a> <a href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" style="font-size: 10px;">词法分析</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/09/19/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/IOTyea0H9/">Vertx 与 Actor Model 浅谈</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/30/j5UFidrfC/">JDK Dynamic Proxy</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/28/git-fork-sync/">Git 保持 fork 仓库和原始仓库同步更新</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/24/about/">关于我</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>

@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  
+
+  
+  <title>词法分析 | Hexo</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+  <meta name="description" content="词法分析是编译的第一步，通常由词法分析器以字符流的形式扫描源代码文件，并识别出源代码中的特定字符串，如 标识符，关键字，特殊符号，算术符号等，这些符号统称为 Token（记号），Token 与自然语言中的单词类似，每一个Token 都是源程序中的信息单元。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="词法分析">
+<meta property="og:url" content="http://example.com/2019/07/09/ci-fa-fen-xi/index.html">
+<meta property="og:site_name" content="Hexo">
+<meta property="og:description" content="词法分析是编译的第一步，通常由词法分析器以字符流的形式扫描源代码文件，并识别出源代码中的特定字符串，如 标识符，关键字，特殊符号，算术符号等，这些符号统称为 Token（记号），Token 与自然语言中的单词类似，每一个Token 都是源程序中的信息单元。">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2019-07-09T03:48:09.000Z">
+<meta property="article:modified_time" content="2019-09-24T06:22:32.000Z">
+<meta property="article:author" content="John Doe">
+<meta property="article:tag" content="词法分析">
+<meta property="article:tag" content="编译原理">
+<meta name="twitter:card" content="summary">
+  
+    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+  
+  
+    <link rel="icon" href="/favicon.png">
+  
+  
+    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+  
+  
+<link rel="stylesheet" href="/css/style.css">
+
+<meta name="generator" content="Hexo 5.2.0"></head>
+
+<body>
+  <div id="container">
+    <div id="wrap">
+      <header id="header">
+  <div id="banner"></div>
+  <div id="header-outer" class="outer">
+    <div id="header-title" class="inner">
+      <h1 id="logo-wrap">
+        <a href="/" id="logo">Hexo</a>
+      </h1>
+      
+    </div>
+    <div id="header-inner" class="inner">
+      <nav id="main-nav">
+        <a id="main-nav-toggle" class="nav-icon"></a>
+        
+          <a class="main-nav-link" href="/">Home</a>
+        
+          <a class="main-nav-link" href="/archives">Archives</a>
+        
+      </nav>
+      <nav id="sub-nav">
+        
+          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
+        
+        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+      </nav>
+      <div id="search-form-wrap">
+        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
+      </div>
+    </div>
+  </div>
+</header>
+      <div class="outer">
+        <section id="main"><article id="post-ci-fa-fen-xi" class="article article-type-post" itemscope itemprop="blogPost">
+  <div class="article-meta">
+    <a href="/2019/07/09/ci-fa-fen-xi/" class="article-date">
+  <time datetime="2019-07-09T03:48:09.000Z" itemprop="datePublished">2019-07-09</time>
+</a>
+    
+  </div>
+  <div class="article-inner">
+    
+    
+      <header class="article-header">
+        
+  
+    <h1 class="article-title" itemprop="name">
+      词法分析
+    </h1>
+  
+
+      </header>
+    
+    <div class="article-entry" itemprop="articleBody">
+      
+        <p>词法分析是编译的第一步，通常由词法分析器以字符流的形式扫描源代码文件，并识别出源代码中的特定字符串，如 标识符，关键字，特殊符号，算术符号等，这些符号统称为 Token（记号），Token 与自然语言中的单词类似，每一个Token 都是源程序中的信息单元。</p>
+<a id="more"></a> 
+
+<p>词法分析的扫描程序的任务可以看做是格式匹配的一种特殊情况，主要的识别方法和格式说明通常有<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Regular_expression">正则表达式</a>和<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Finite-state_machine">有穷自动机</a>两种。</p>
+<h1 id="Token-的表示"><a href="#Token-的表示" class="headerlink" title="Token 的表示"></a>Token 的表示</h1><p>Token 通常被定义成枚举类型来表示，但是在没有枚举类型的语言中则需要另外的表示形式，如老版本的 C 则看到如下的定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IF 256</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> THEN 257</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELSE 258</span></span><br></pre></td></tr></table></figure>
+
+<p>在有枚举的语言时定义 Token 时可以使用枚举类型来表达：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Token</span></span> &#123;</span><br><span class="line">  IF, ELSE, THEN, PLUS, DIV, </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Token 作为一种逻辑表示必须与它们所表示的字符串区分开来，例如，IF 是一种 Token 类型但是与它表示的字符串“if”是不相同的，又如 NUMBER 表示为数字类型的 Token，其字符串为 123456，这是两种不同概念，Token 的字符串值也称串值(string value) 或者词义(lexeme)，某些 Token 只有一个串值，关键字就是如此，有些 Token 含有无限多的语义。</p>
+<p>与 Token 相关的值都是 Token 的属性，如 NUMBER 的串值“123456”等等，词法分析阶段需要收集并记录好这些相关的属性和 Token，因此需要用到一种数据类型来表示，这种数据类型叫做 记号记录（token record），在 C 中可以用结构体来表示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  Token tokenval;</span><br><span class="line">  <span class="keyword">char</span>* stringval;</span><br><span class="line">  <span class="keyword">int</span> numval;</span><br><span class="line">&#125; TokenRecord;</span><br></pre></td></tr></table></figure>
+
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>词法分析阶段使用正则表达式来定义和识别格式是常用的方法，一个正则表达式可以看做是一种模式，在输入中可以匹配一个或多个符合模式定义的子串，所以一个正则表达式表示的是一个集合，这个集合包含了所有匹配的串，这个集合也称为有正则表达式生成的语言（language generated by the regular expression）写作 L(r)，此处的“语言”与程序设计语言没有特殊关系，一般是 ASCII 字符的集合或某个子集，集合的元素称为 符号（symbol），符号的集合称为字母表，用希腊字母表示为 ∑ （sigma）</p>
+<h2 id="基本正则表达式"><a href="#基本正则表达式" class="headerlink" title="基本正则表达式"></a>基本正则表达式</h2><p>基本的正则表达式由单个符号构成，利用基本的正则表达式可以再构造出复杂的正则表达式，它同构造算术表达式的方法类似。</p>
+<ol>
+<li>假设 a 是字母表 ∑ 中的任意字符，若要编写匹配字符 a 的正则表达式则为 L(a) = {a}</li>
+<li>空串用 <em>L</em>(ε) = {ε}来定义，假设 e 代表不包含任何字符的串</li>
+<li>与任何串都不匹配的正则表达式定义为 L(Φ) = {}，表示与任何串都不匹配的正则，它是一个空集</li>
+</ol>
+<h2 id="正则表达式的基本运算"><a href="#正则表达式的基本运算" class="headerlink" title="正则表达式的基本运算"></a>正则表达式的基本运算</h2><p>正则表达式有三种基本运算，1. 选择 2. 连结 3. 闭包。</p>
+<ol>
+<li>选择运算表示为从各个选择的对象中选择，用元字符 | 表示，如果 r 和 s 是正则表达式，则 r | s 可以匹配 r 或 s 的任意串，也可以看做是 L(s)和 L(r)的联合(union)</li>
+<li>连结运算是两个或多个正则表达式，例如有 r,s 两个正则表达式，他们的连结写作 rs,它匹配两串连结的任何一个串，例如：ab 匹配  “ab” 串，( a | b ) c 匹配 “ac”，”bc”</li>
+<li>闭包运算也可以叫重复运算，意思是匹配一次或者多次模式，假设有正则表达式 a*，它可以匹配，ε,a,aa,aaa,aaaaa…，这是一个无穷集的联合，但是其中的每个元素都是 a 中串的有穷连结。</li>
+</ol>
+<h2 id="编程语言记号的正则表达式"><a href="#编程语言记号的正则表达式" class="headerlink" title="编程语言记号的正则表达式"></a>编程语言记号的正则表达式</h2><p>在众多编程语言中，语言记号可以分为若干个标准的种类：1. 保留字(keyword)，2. 特殊符号，3. 标识符，4. 文字或常量。</p>
+<ol>
+<li>保留字也称为关键字，是编程语言中具有特定含义的字母表字符的固定串，例如 if，for，while 等等。</li>
+<li>特殊符号包含了运算符，赋值，等式，它们既可以是单个字符也可以是多个字符，取决于具体的编程语言设计。</li>
+<li>标识符是一类编程语言中约定的一种命名规则，比如变量名，函数签名等等。</li>
+<li>文字和常量包含了数字常量和字符串常量，如 123，3.14159，“hello”, “world” 以及字符 ‘a’, ‘b’ 等等直接可以按字面量取值的符号。</li>
+</ol>
+
+      
+    </div>
+    <footer class="article-footer">
+      <a data-url="http://example.com/2019/07/09/ci-fa-fen-xi/" data-id="ckf9ei7fx0005dq6lddj90shm" class="article-share-link">Share</a>
+      
+      
+  <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag">编译原理</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag">词法分析</a></li></ul>
+
+    </footer>
+  </div>
+  
+    
+<nav id="article-nav">
+  
+    <a href="/2019/08/25/vscode-remote-yuan-cheng-kai-fa-ti-yan-bao-gao/" id="article-nav-newer" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Newer</strong>
+      <div class="article-nav-title">
+        
+          vscode remote 远程开发体验报告
+        
+      </div>
+    </a>
+  
+  
+    <a href="/2019/03/02/ji-zhu-lei-rss-yuan-fen-xiang/" id="article-nav-older" class="article-nav-link-wrap">
+      <strong class="article-nav-caption">Older</strong>
+      <div class="article-nav-title">技术类 RSS 源分享</div>
+    </a>
+  
+</nav>
+
+  
+</article>
+
+</section>
+        
+          <aside id="sidebar">
+  
+    
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tags</h3>
+    <div class="widget">
+      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AJAX/" rel="tag">AJAX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/API-design/" rel="tag">API design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor-Model/" rel="tag">Actor Model</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/" rel="tag">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSP/" rel="tag">CSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RESTful-API/" rel="tag">RESTful API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSS/" rel="tag">RSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vertx/" rel="tag">Vertx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-architecture/" rel="tag">software architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9A%E5%BE%92/" rel="tag">囚徒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag">科学上网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag">编译原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag">词法分析</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Tag Cloud</h3>
+    <div class="widget tagcloud">
+      <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/API-design/" style="font-size: 10px;">API design</a> <a href="/tags/Actor-Model/" style="font-size: 10px;">Actor Model</a> <a href="/tags/Angular/" style="font-size: 10px;">Angular</a> <a href="/tags/CSP/" style="font-size: 10px;">CSP</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/RESTful-API/" style="font-size: 10px;">RESTful API</a> <a href="/tags/RSS/" style="font-size: 10px;">RSS</a> <a href="/tags/Vertx/" style="font-size: 10px;">Vertx</a> <a href="/tags/software-architecture/" style="font-size: 10px;">software architecture</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/web/" style="font-size: 20px;">web</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 20px;">前端</a> <a href="/tags/%E5%9B%9A%E5%BE%92/" style="font-size: 10px;">囚徒</a> <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">并发编程</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 10px;">科学上网</a> <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" style="font-size: 10px;">编译原理</a> <a href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" style="font-size: 10px;">词法分析</a>
+    </div>
+  </div>
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Archives</h3>
+    <div class="widget">
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li></ul>
+    </div>
+  </div>
+
+
+  
+    
+  <div class="widget-wrap">
+    <h3 class="widget-title">Recent Posts</h3>
+    <div class="widget">
+      <ul>
+        
+          <li>
+            <a href="/2020/09/19/hello-world/">Hello World</a>
+          </li>
+        
+          <li>
+            <a href="/2020/05/28/IOTyea0H9/">Vertx 与 Actor Model 浅谈</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/30/j5UFidrfC/">JDK Dynamic Proxy</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/28/git-fork-sync/">Git 保持 fork 仓库和原始仓库同步更新</a>
+          </li>
+        
+          <li>
+            <a href="/2019/09/24/about/">关于我</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+
+  
+</aside>
+        
+      </div>
+      <footer id="footer">
+  
+  <div class="outer">
+    <div id="footer-info" class="inner">
+      &copy; 2020 John Doe<br>
+      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    </div>
+  </div>
+</footer>
+    </div>
+    <nav id="mobile-nav">
+  
+    <a href="/" class="mobile-nav-link">Home</a>
+  
+    <a href="/archives" class="mobile-nav-link">Archives</a>
+  
+</nav>
+    
+
+<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+
+
+  
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+
+  
+<script src="/fancybox/jquery.fancybox.pack.js"></script>
+
+
+
+
+<script src="/js/script.js"></script>
+
+
+
+
+  </div>
+</body>
+</html>
