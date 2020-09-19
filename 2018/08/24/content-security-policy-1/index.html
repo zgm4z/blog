@@ -5,28 +5,28 @@
   
 
   
-  <title>Content-Security-Policy | Hexo</title>
+  <title>Content-Security-Policy | Z</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="本篇主要描述了一些关于 Content Security Policy ( CSP )，内容安全策略的相关知识，本文内容也许存在错误的地方，想要查看确切的内容请查阅 W3C working draft CSP3">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Content-Security-Policy">
 <meta property="og:url" content="http://example.com/2018/08/24/content-security-policy-1/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Z">
 <meta property="og:description" content="本篇主要描述了一些关于 Content Security Policy ( CSP )，内容安全策略的相关知识，本文内容也许存在错误的地方，想要查看确切的内容请查阅 W3C working draft CSP3">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://zgm.life/post-images/1569305713835.png">
-<meta property="og:image" content="https://zgm.life/post-images/1569305722216.png">
-<meta property="og:image" content="https://zgm.life/post-images/1569305685990.png">
-<meta property="og:image" content="https://zgm.life/post-images/1569305698097.png">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/1569305713835.png">
+<meta property="og:image" content="http://example.com/images/1569305722216.png">
+<meta property="og:image" content="http://example.com/images/1569305685990.png">
+<meta property="og:image" content="http://example.com/images/1569305698097.png">
 <meta property="article:published_time" content="2018-08-24T05:03:10.000Z">
-<meta property="article:modified_time" content="2019-09-24T06:15:38.000Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2020-09-19T08:27:46.716Z">
+<meta property="article:author" content="zhuo guangming">
 <meta property="article:tag" content="web">
 <meta property="article:tag" content="CSP">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zgm.life/post-images/1569305713835.png">
+<meta name="twitter:image" content="http://example.com/images/1569305713835.png">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Z" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -47,7 +47,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">Z</a>
       </h1>
       
     </div>
@@ -64,7 +64,7 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
@@ -162,14 +162,14 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> http = <span class="built_in">require</span>(<span class="string">&quot;http&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> fs = <span class="built_in">require</span>(<span class="string">&quot;fs&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> url = <span class="built_in">require</span>(<span class="string">&quot;url&quot;</span>);</span><br><span class="line"><span class="keyword">const</span> path = <span class="built_in">require</span>(<span class="string">&quot;path&quot;</span>)</span><br><span class="line"><span class="keyword">const</span> server = http.createServer(<span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> _path = path.join(__dirname, url.parse(req.url).pathname);</span><br><span class="line">    <span class="keyword">let</span> buf = fs.readFileSync(_path);</span><br><span class="line">    <span class="comment">// res.setHeader(</span></span><br><span class="line">    <span class="comment">//     &quot;Content-Security-Policy&quot;,</span></span><br><span class="line">    <span class="comment">//     &quot;script-src &#x27;self&#x27;&quot;</span></span><br><span class="line">    <span class="comment">// );</span></span><br><span class="line">    res.write(buf)</span><br><span class="line">    res.end();</span><br><span class="line"></span><br><span class="line">&#125;)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">server.listen(<span class="number">8080</span>, <span class="function">() =&gt;</span> <span class="built_in">console</span>.log(<span class="string">&quot;server startup&quot;</span>));</span><br></pre></td></tr></table></figure>
 
 <p>注意看上面的代码，博主注释掉了其中设置 CSP 的代码，如果现在运行不会出现任何问题所有资源都会被加载，如下图：</p>
-<p><img src="https://zgm.life/post-images/1569305713835.png"></p>
-<p><img src="https://zgm.life/post-images/1569305722216.png"></p>
+<p><img src="/images/1569305713835.png"></p>
+<p><img src="/images/1569305722216.png"></p>
 <p>可以看到两个脚本都被加载并运行了，之后我们打开关于 CSP 设置代码的注释，并设置 JavaScript 脚本的可信来源只有与文档同源或者在其子域名之下的资源可以被加载，如下</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">const</span> server = http.createServer(<span class="function">(<span class="params">req, res</span>) =&gt;</span> &#123;</span><br><span class="line">    <span class="keyword">let</span> _path = path.join(__dirname, url.parse(req.url).pathname);</span><br><span class="line">    <span class="keyword">let</span> buf = fs.readFileSync(_path);</span><br><span class="line">    res.setHeader(</span><br><span class="line">        <span class="string">&quot;Content-Security-Policy&quot;</span>,</span><br><span class="line">        <span class="string">&quot;script-src &#x27;self&#x27;&quot;</span></span><br><span class="line">    );</span><br><span class="line">    res.write(buf)</span><br><span class="line">    res.end();</span><br><span class="line"></span><br><span class="line">&#125;)</span><br></pre></td></tr></table></figure>
 
 <p>运行结果如下：</p>
-<p><img src="https://zgm.life/post-images/1569305685990.png"></p>
-<p><img src="https://zgm.life/post-images/1569305698097.png"></p>
+<p><img src="/images/1569305685990.png"></p>
+<p><img src="/images/1569305698097.png"></p>
 <p>第一个脚本在属于可信来源被加载并运行，第二个脚本不属于可信的来源可以看到其状态变成了 <strong>blocked:csp</strong> 表示该请求被阻止了。</p>
 
       
@@ -215,7 +215,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
+    <h3 class="widget-title">标签</h3>
     <div class="widget">
       <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AJAX/" rel="tag">AJAX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/API-design/" rel="tag">API design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor-Model/" rel="tag">Actor Model</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/" rel="tag">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSP/" rel="tag">CSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RESTful-API/" rel="tag">RESTful API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSS/" rel="tag">RSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vertx/" rel="tag">Vertx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-architecture/" rel="tag">software architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9A%E5%BE%92/" rel="tag">囚徒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag">科学上网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag">编译原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag">词法分析</a></li></ul>
     </div>
@@ -225,7 +225,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
+    <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
       <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/API-design/" style="font-size: 10px;">API design</a> <a href="/tags/Actor-Model/" style="font-size: 10px;">Actor Model</a> <a href="/tags/Angular/" style="font-size: 10px;">Angular</a> <a href="/tags/CSP/" style="font-size: 10px;">CSP</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/RESTful-API/" style="font-size: 10px;">RESTful API</a> <a href="/tags/RSS/" style="font-size: 10px;">RSS</a> <a href="/tags/Vertx/" style="font-size: 10px;">Vertx</a> <a href="/tags/software-architecture/" style="font-size: 10px;">software architecture</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/web/" style="font-size: 20px;">web</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 20px;">前端</a> <a href="/tags/%E5%9B%9A%E5%BE%92/" style="font-size: 10px;">囚徒</a> <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">并发编程</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 10px;">科学上网</a> <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" style="font-size: 10px;">编译原理</a> <a href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" style="font-size: 10px;">词法分析</a>
     </div>
@@ -234,9 +234,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li></ul>
     </div>
   </div>
 
@@ -244,7 +244,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
         
@@ -280,7 +280,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 John Doe<br>
+      &copy; 2020 zhuo guangming<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>

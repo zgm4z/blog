@@ -5,27 +5,27 @@
   
 
   
-  <title>vscode remote 远程开发体验报告 | Hexo</title>
+  <title>vscode remote 远程开发体验报告 | Z</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
   <meta name="description" content="北京时间 2019 年 5 月 3 日 微软发布了 vscode remote 插件，正式宣布远程开发进入具有与本地开发体验一致的时代，本次发布的插件可以工作在 虚拟机，远程主机，容器和 WSL 环境中，只需要安装相应插件即可，至本文发布之时，已经可以在 stable 的 vscode 上安装 vscode remote 插件，搜索 vscode remote 即可安装。">
 <meta property="og:type" content="article">
 <meta property="og:title" content="vscode remote 远程开发体验报告">
 <meta property="og:url" content="http://example.com/2019/08/25/vscode-remote-yuan-cheng-kai-fa-ti-yan-bao-gao/index.html">
-<meta property="og:site_name" content="Hexo">
+<meta property="og:site_name" content="Z">
 <meta property="og:description" content="北京时间 2019 年 5 月 3 日 微软发布了 vscode remote 插件，正式宣布远程开发进入具有与本地开发体验一致的时代，本次发布的插件可以工作在 虚拟机，远程主机，容器和 WSL 环境中，只需要安装相应插件即可，至本文发布之时，已经可以在 stable 的 vscode 上安装 vscode remote 插件，搜索 vscode remote 即可安装。">
-<meta property="og:locale" content="en_US">
-<meta property="og:image" content="https://zgm.life/post-images/1569305933197.png">
-<meta property="og:image" content="https://zgm.life/post-images/1569305947443.png">
-<meta property="og:image" content="https://zgm.life/post-images/1569305958268.png">
-<meta property="og:image" content="https://zgm.life/post-images/1569305969415.png">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/images/1569305933197.png">
+<meta property="og:image" content="http://example.com/images/1569305947443.png">
+<meta property="og:image" content="http://example.com/images/1569305958268.png">
+<meta property="og:image" content="http://example.com/images/1569305969415.png">
 <meta property="article:published_time" content="2019-08-25T09:14:56.000Z">
-<meta property="article:modified_time" content="2019-09-24T06:19:56.000Z">
-<meta property="article:author" content="John Doe">
+<meta property="article:modified_time" content="2020-09-19T08:27:46.717Z">
+<meta property="article:author" content="zhuo guangming">
 <meta property="article:tag" content="vscode">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="https://zgm.life/post-images/1569305933197.png">
+<meta name="twitter:image" content="http://example.com/images/1569305933197.png">
   
-    <link rel="alternate" href="/atom.xml" title="Hexo" type="application/atom+xml">
+    <link rel="alternate" href="/atom.xml" title="Z" type="application/atom+xml">
   
   
     <link rel="icon" href="/favicon.png">
@@ -46,7 +46,7 @@
   <div id="header-outer" class="outer">
     <div id="header-title" class="inner">
       <h1 id="logo-wrap">
-        <a href="/" id="logo">Hexo</a>
+        <a href="/" id="logo">Z</a>
       </h1>
       
     </div>
@@ -63,7 +63,7 @@
         
           <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
         
-        <a id="nav-search-btn" class="nav-icon" title="Search"></a>
+        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
       </nav>
       <div id="search-form-wrap">
         <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
@@ -97,13 +97,13 @@
         <p>北京时间 2019 年 5 月 3 日 微软发布了 vscode remote 插件，正式宣布远程开发进入具有与本地开发体验一致的时代，本次发布的插件可以工作在 虚拟机，远程主机，容器和 WSL 环境中，只需要安装相应插件即可，至本文发布之时，已经可以在 stable 的 vscode 上安装 vscode remote 插件，搜索 vscode remote 即可安装。</p>
 <a id="more"></a>
 
-<p><img src="https://zgm.life/post-images/1569305933197.png"></p>
+<p><img src="/images/1569305933197.png"></p>
 <p>博主由于毕设需要开发一个和 linux 内核通信的应用，但是手里并没有多余的机器，于是就上了 vscode remote 的船，本次的开发方案是 vscode remote + ssh，在博主的 MBP 上使用虚拟机安装了 Ubuntu 然后开启 SSH 服务并在本地 vscode 安装远程开发插件，配置完成之后就可以愉快的打开远程机器的项目啦~</p>
-<p><img src="https://zgm.life/post-images/1569305947443.png"></p>
+<p><img src="/images/1569305947443.png"></p>
 <p>如上图所示，就是配置好了之后的界面，不仅支持远程连接，还可以做端口转发，再来一张打开远程项目的图：</p>
-<p><img src="https://zgm.life/post-images/1569305958268.png"></p>
+<p><img src="/images/1569305958268.png"></p>
 <p>与本地项目基本一样，并且可以在终端 Tab 里打开远程主机的终端连接，debug 功能也很完美。</p>
-<p><img src="https://zgm.life/post-images/1569305969415.png"></p>
+<p><img src="/images/1569305969415.png"></p>
 <p>当然如果主机在远程的话需要较好的网络环境才能具有比较快的响应速度，像自动完成，代码提示的功能，不过像博主这样的方案基本上感觉不到延迟了，与本地开发并无二致。</p>
 
       
@@ -149,7 +149,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tags</h3>
+    <h3 class="widget-title">标签</h3>
     <div class="widget">
       <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AJAX/" rel="tag">AJAX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/API-design/" rel="tag">API design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor-Model/" rel="tag">Actor Model</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/" rel="tag">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSP/" rel="tag">CSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RESTful-API/" rel="tag">RESTful API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSS/" rel="tag">RSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vertx/" rel="tag">Vertx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-architecture/" rel="tag">software architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9A%E5%BE%92/" rel="tag">囚徒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag">科学上网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag">编译原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag">词法分析</a></li></ul>
     </div>
@@ -159,7 +159,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Tag Cloud</h3>
+    <h3 class="widget-title">标签云</h3>
     <div class="widget tagcloud">
       <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/API-design/" style="font-size: 10px;">API design</a> <a href="/tags/Actor-Model/" style="font-size: 10px;">Actor Model</a> <a href="/tags/Angular/" style="font-size: 10px;">Angular</a> <a href="/tags/CSP/" style="font-size: 10px;">CSP</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/RESTful-API/" style="font-size: 10px;">RESTful API</a> <a href="/tags/RSS/" style="font-size: 10px;">RSS</a> <a href="/tags/Vertx/" style="font-size: 10px;">Vertx</a> <a href="/tags/software-architecture/" style="font-size: 10px;">software architecture</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/web/" style="font-size: 20px;">web</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 20px;">前端</a> <a href="/tags/%E5%9B%9A%E5%BE%92/" style="font-size: 10px;">囚徒</a> <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">并发编程</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 10px;">科学上网</a> <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" style="font-size: 10px;">编译原理</a> <a href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" style="font-size: 10px;">词法分析</a>
     </div>
@@ -168,9 +168,9 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Archives</h3>
+    <h3 class="widget-title">归档</h3>
     <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">September 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">May 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">September 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">August 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">July 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">March 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">September 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">August 2018</a></li></ul>
+      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/09/">九月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li></ul>
     </div>
   </div>
 
@@ -178,7 +178,7 @@
   
     
   <div class="widget-wrap">
-    <h3 class="widget-title">Recent Posts</h3>
+    <h3 class="widget-title">最新文章</h3>
     <div class="widget">
       <ul>
         
@@ -214,7 +214,7 @@
   
   <div class="outer">
     <div id="footer-info" class="inner">
-      &copy; 2020 John Doe<br>
+      &copy; 2020 zhuo guangming<br>
       Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
     </div>
   </div>
