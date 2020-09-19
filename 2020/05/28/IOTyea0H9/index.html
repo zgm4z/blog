@@ -1,103 +1,82 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   
-
   
-  <title>Vertx 与 Actor Model 浅谈 | Z</title>
+  
+    <meta name="description" content="善读书可以治愚。">
+  
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
-  <meta name="description" content="概述本文将围绕着并发编程领域中相关的技术和编程模式随便谈谈自己的理解和看法，主要核心基于Vetrx 和 Actor Model ，并阐述一些基本并的发编程的概念，阅读此文需要拥有 Vertx 和 Actor Model相关的背景知识，如果您正在阅读此文但是对这两个东西不了解那这篇可能不适合阅读。">
-<meta property="og:type" content="article">
-<meta property="og:title" content="Vertx 与 Actor Model 浅谈">
-<meta property="og:url" content="http://example.com/2020/05/28/IOTyea0H9/index.html">
-<meta property="og:site_name" content="Z">
-<meta property="og:description" content="概述本文将围绕着并发编程领域中相关的技术和编程模式随便谈谈自己的理解和看法，主要核心基于Vetrx 和 Actor Model ，并阐述一些基本并的发编程的概念，阅读此文需要拥有 Vertx 和 Actor Model相关的背景知识，如果您正在阅读此文但是对这两个东西不了解那这篇可能不适合阅读。">
-<meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/images/1590749494964.png">
-<meta property="og:image" content="http://example.com/images/1590750489219.png">
-<meta property="article:published_time" content="2020-05-28T11:04:54.000Z">
-<meta property="article:modified_time" content="2020-09-19T08:27:46.717Z">
-<meta property="article:author" content="zhuo guangming">
-<meta property="article:tag" content="并发编程">
-<meta property="article:tag" content="Java">
-<meta property="article:tag" content="Actor Model">
-<meta property="article:tag" content="Vertx">
-<meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/images/1590749494964.png">
+  <title>
+    Vertx 与 Actor Model 浅谈 |
+    
+    Z</title>
   
-    <link rel="alternate" href="/atom.xml" title="Z" type="application/atom+xml">
-  
-  
-    <link rel="icon" href="/favicon.png">
-  
-  
-    <link href="//fonts.googleapis.com/css?family=Source+Code+Pro" rel="stylesheet" type="text/css">
+    <link rel="shortcut icon" href="/favicon.ico">
   
   
 <link rel="stylesheet" href="/css/style.css">
 
+  
+    
+<link rel="stylesheet" href="/fancybox/jquery.fancybox.min.css">
+
+  
+  
+<script src="/js/pace.min.js"></script>
+
 <meta name="generator" content="Hexo 5.2.0"></head>
 
 <body>
-  <div id="container">
-    <div id="wrap">
-      <header id="header">
-  <div id="banner"></div>
-  <div id="header-outer" class="outer">
-    <div id="header-title" class="inner">
-      <h1 id="logo-wrap">
-        <a href="/" id="logo">Z</a>
-      </h1>
-      
-    </div>
-    <div id="header-inner" class="inner">
-      <nav id="main-nav">
-        <a id="main-nav-toggle" class="nav-icon"></a>
+<main class="content">
+  <section class="outer">
+  <article id="post-IOTyea0H9" class="article article-type-post" itemscope itemprop="blogPost" data-scroll-reveal>
+
+    <div class="article-inner">
         
-          <a class="main-nav-link" href="/">Home</a>
-        
-          <a class="main-nav-link" href="/archives">Archives</a>
-        
-          <a class="main-nav-link" href="/about">About</a>
-        
-      </nav>
-      <nav id="sub-nav">
-        
-          <a id="nav-rss-link" class="nav-icon" href="/atom.xml" title="RSS Feed"></a>
-        
-        <a id="nav-search-btn" class="nav-icon" title="搜索"></a>
-      </nav>
-      <div id="search-form-wrap">
-        <form action="//google.com/search" method="get" accept-charset="UTF-8" class="search-form"><input type="search" name="q" class="search-form-input" placeholder="Search"><button type="submit" class="search-form-submit">&#xF002;</button><input type="hidden" name="sitesearch" value="http://example.com"></form>
-      </div>
-    </div>
-  </div>
-</header>
-      <div class="outer">
-        <section id="main"><article id="post-IOTyea0H9" class="article article-type-post" itemscope itemprop="blogPost">
-  <div class="article-meta">
-    <a href="/2020/05/28/IOTyea0H9/" class="article-date">
-  <time datetime="2020-05-28T11:04:54.000Z" itemprop="datePublished">2020-05-28</time>
-</a>
-    
-  </div>
-  <div class="article-inner">
-    
-    
-      <header class="article-header">
-        
+            <header class="article-header">
+                
   
     <h1 class="article-title" itemprop="name">
       Vertx 与 Actor Model 浅谈
     </h1>
   
+  
 
-      </header>
-    
-    <div class="article-entry" itemprop="articleBody">
-      
-        <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>本文将围绕着并发编程领域中相关的技术和编程模式随便谈谈自己的理解和看法，主要核心基于<a target="_blank" rel="noopener" href="https://vertx.io/">Vetrx</a> 和 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Actor_model">Actor Model</a> ，并阐述一些基本并的发编程的概念，阅读此文需要拥有 Vertx 和 Actor Model相关的背景知识，如果您正在阅读此文但是对这两个东西不了解那这篇可能不适合阅读。</p>
+
+
+
+            </header>
+            
+
+                
+                    <div class="article-meta">
+                        <a href="/2020/05/28/IOTyea0H9/" class="article-date">
+  <time datetime="2020-05-28T11:04:54.000Z" itemprop="datePublished">2020-05-28</time>
+</a>
+                            
+                    </div>
+                    
+
+                        
+                            
+    <div class="tocbot"></div>
+
+
+
+
+
+                                
+
+                                    <div class="article-entry" itemprop="articleBody">
+                                        
+
+
+                                            
+
+                                                
+                                                                    <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>本文将围绕着并发编程领域中相关的技术和编程模式随便谈谈自己的理解和看法，主要核心基于<a target="_blank" rel="noopener" href="https://vertx.io/">Vetrx</a> 和 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Actor_model">Actor Model</a> ，并阐述一些基本并的发编程的概念，阅读此文需要拥有 Vertx 和 Actor Model相关的背景知识，如果您正在阅读此文但是对这两个东西不了解那这篇可能不适合阅读。</p>
 <a id="more"></a>
 <h1 id="并发-concurrency-和并行-parallel"><a href="#并发-concurrency-和并行-parallel" class="headerlink" title="并发 (concurrency) 和并行 (parallel)"></a>并发 (concurrency) 和并行 (parallel)</h1><p>在很早的时候，大多数应用都是单线程运行，CPU 核心数也只有一个，采用分时的办法来模拟多个事情同时进行的假象，然而在微观上这些 CPU上的线程是串行的，它们轮流获得 CPU 的执行时间来运行各自的代码，由于 CPU 运行速度非常快，而且每个线程获得的时间片也是毫秒计所有人类并不能感知到停顿，看起来就像多个任务同时在运行中，进入多核 CPU 时代才有了真正的并行程序，多个线程同时运行在不同的CPU 核心上。</p>
 <h2 id="Concurrency-并发"><a href="#Concurrency-并发" class="headerlink" title="Concurrency 并发"></a>Concurrency 并发</h2><p>在编写多线程应用程序时我们最先要了解的两个基本概念是并行和并发，并发的解释可以为：同时存在两个或以上的线程需要得到同一个 CPU 核心去处理，为了达到宏观上的并发效果，CPU 采用了分时的办法来实现，每个线程分别循环获得一个指定的 CPU 运行时间，然后 CPU 快速的在这些线程上来回切换，使得宏观上看他们都是在同时得到了CPU 的处理时间，但是 CPU 本身不能独立完成这些线程切换的操作，关于线程的调度要依靠操作系统完成，这里不展开。</p>
@@ -115,139 +94,154 @@ CounterVerticle 是一个 Actor，它接收外部 actor 的消息并根据不同
 OpEmmitVerticle也是一个独立的 Actor，同时也有自己的 mailbox 地址，它在内部会给 CounterVerticle 发送消息并使用回复的数据决定下一步动作，可以看到我们在 Vertx 中也可以实现 Actor Model 的编程模型，并且使用消息在 actor 之间交互，每一个 actor 都是独立的没有共享内存，各自运行在自己的线程上，通过接收消息来决定执行何种动作。</li>
 </ol>
 
-      
-    </div>
-    <footer class="article-footer">
-      <a data-url="http://example.com/2020/05/28/IOTyea0H9/" data-id="ckf9ei7fu0002dq6lgqjva2zp" class="article-share-link">Share</a>
-      
-      
+                                                                        
+                                    </div>
+                                    <footer class="article-footer">
+                                        <a data-url="http://example.com/2020/05/28/IOTyea0H9/" data-id="ckf9ei7fu0002dq6lgqjva2zp" class="article-share-link">
+                                            分享
+                                        </a>
+                                        
   <ul class="article-tag-list" itemprop="keywords"><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Actor-Model/" rel="tag">Actor Model</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/Vertx/" rel="tag">Vertx</a></li><li class="article-tag-list-item"><a class="article-tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a></li></ul>
 
-    </footer>
-  </div>
-  
-    
-<nav id="article-nav">
-  
-  
-    <a href="/2019/09/30/j5UFidrfC/" id="article-nav-older" class="article-nav-link-wrap">
-      <strong class="article-nav-caption">Older</strong>
-      <div class="article-nav-title">JDK Dynamic Proxy</div>
-    </a>
-  
-</nav>
+                                    </footer>
 
-  
+    </div>
+
+    
+        
+  <nav class="article-nav">
+    
+    
+      <a href="/2019/09/30/j5UFidrfC/" class="article-nav-link">
+        <strong class="article-nav-caption">后一篇</strong>
+        <div class="article-nav-title">JDK Dynamic Proxy</div>
+      </a>
+    
+  </nav>
+
+
+            
+
+                
+                    
+                        
+                            
+
 </article>
-
 </section>
-        
-          <aside id="sidebar">
-  
-    
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签</h3>
-    <div class="widget">
-      <ul class="tag-list" itemprop="keywords"><li class="tag-list-item"><a class="tag-list-link" href="/tags/AJAX/" rel="tag">AJAX</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/API-design/" rel="tag">API design</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Actor-Model/" rel="tag">Actor Model</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Angular/" rel="tag">Angular</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/CSP/" rel="tag">CSP</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Git/" rel="tag">Git</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Java/" rel="tag">Java</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RESTful-API/" rel="tag">RESTful API</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/RSS/" rel="tag">RSS</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/Vertx/" rel="tag">Vertx</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/software-architecture/" rel="tag">software architecture</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/vscode/" rel="tag">vscode</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/web/" rel="tag">web</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag">前端</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%9B%9A%E5%BE%92/" rel="tag">囚徒</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" rel="tag">并发编程</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" rel="tag">科学上网</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag">编译原理</a></li><li class="tag-list-item"><a class="tag-list-link" href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag">词法分析</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">标签云</h3>
-    <div class="widget tagcloud">
-      <a href="/tags/AJAX/" style="font-size: 10px;">AJAX</a> <a href="/tags/API-design/" style="font-size: 10px;">API design</a> <a href="/tags/Actor-Model/" style="font-size: 10px;">Actor Model</a> <a href="/tags/Angular/" style="font-size: 10px;">Angular</a> <a href="/tags/CSP/" style="font-size: 10px;">CSP</a> <a href="/tags/Git/" style="font-size: 10px;">Git</a> <a href="/tags/Java/" style="font-size: 20px;">Java</a> <a href="/tags/RESTful-API/" style="font-size: 10px;">RESTful API</a> <a href="/tags/RSS/" style="font-size: 10px;">RSS</a> <a href="/tags/Vertx/" style="font-size: 10px;">Vertx</a> <a href="/tags/software-architecture/" style="font-size: 10px;">software architecture</a> <a href="/tags/vscode/" style="font-size: 10px;">vscode</a> <a href="/tags/web/" style="font-size: 20px;">web</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 20px;">前端</a> <a href="/tags/%E5%9B%9A%E5%BE%92/" style="font-size: 10px;">囚徒</a> <a href="/tags/%E5%B9%B6%E5%8F%91%E7%BC%96%E7%A8%8B/" style="font-size: 10px;">并发编程</a> <a href="/tags/%E7%A7%91%E5%AD%A6%E4%B8%8A%E7%BD%91/" style="font-size: 10px;">科学上网</a> <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" style="font-size: 10px;">编译原理</a> <a href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" style="font-size: 10px;">词法分析</a>
-    </div>
-  </div>
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">归档</h3>
-    <div class="widget">
-      <ul class="archive-list"><li class="archive-list-item"><a class="archive-list-link" href="/archives/2020/05/">五月 2020</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/09/">九月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/08/">八月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/07/">七月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2019/03/">三月 2019</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/09/">九月 2018</a></li><li class="archive-list-item"><a class="archive-list-link" href="/archives/2018/08/">八月 2018</a></li></ul>
-    </div>
-  </div>
-
-
-  
-    
-  <div class="widget-wrap">
-    <h3 class="widget-title">最新文章</h3>
-    <div class="widget">
-      <ul>
-        
-          <li>
-            <a href="/2020/05/28/IOTyea0H9/">Vertx 与 Actor Model 浅谈</a>
-          </li>
-        
-          <li>
-            <a href="/2019/09/30/j5UFidrfC/">JDK Dynamic Proxy</a>
-          </li>
-        
-          <li>
-            <a href="/2019/09/28/git-fork-sync/">Git 保持 fork 仓库和原始仓库同步更新</a>
-          </li>
-        
-          <li>
-            <a href="/2019/09/22/li-yong-cdn-he-caddy-fan-xiang-dai-li-yin-cang-ip/">利用 CDN 和 Caddy 反向代理隐藏IP</a>
-          </li>
-        
-          <li>
-            <a href="/2019/08/25/vscode-remote-yuan-cheng-kai-fa-ti-yan-bao-gao/">vscode remote 远程开发体验报告</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-
-  
-</aside>
-        
-      </div>
-      <footer id="footer">
-  
+  <footer class="footer">
   <div class="outer">
-    <div id="footer-info" class="inner">
-      &copy; 2020 zhuo guangming<br>
-      Powered by <a href="http://hexo.io/" target="_blank">Hexo</a>
+    <div class="float-right">
+      <ul class="list-inline">
+  
+    <li><i class="fe fe-smile-alt"></i> <span id="busuanzi_value_site_uv"></span></li>
+  
+    <li><i class="fe fe-bookmark"></i> <span id="busuanzi_value_page_pv"></span></li>
+  
+</ul>
     </div>
+    <ul class="list-inline">
+      <li>&copy; 2020 Z</li>
+      <li>Powered by <a href="http://hexo.io/" target="_blank">Hexo</a></li>
+      <li>Theme  <a target="_blank" rel="noopener" href="https://github.com/zhwangart/hexo-theme-ocean">Ocean</a></li>
+    </ul>
   </div>
 </footer>
+
+</main>
+<aside class="sidebar">
+  <button class="navbar-toggle"></button>
+<nav class="navbar">
+  
+    <div class="logo">
+      <a href="/"><img src="/images/hexo.svg" alt="Z"></a>
     </div>
-    <nav id="mobile-nav">
   
-    <a href="/" class="mobile-nav-link">Home</a>
-  
-    <a href="/archives" class="mobile-nav-link">Archives</a>
-  
-    <a href="/about" class="mobile-nav-link">About</a>
-  
-</nav>
+  <ul class="nav nav-main">
     
+      <li class="nav-item">
+        <a class="nav-item-link" href="/">Home</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/archives">Archives</a>
+      </li>
+    
+      <li class="nav-item">
+        <a class="nav-item-link" href="/about">About</a>
+      </li>
+    
+    <li class="nav-item">
+      <a class="nav-item-link nav-item-search" title="搜索">
+        <i class="fe fe-search"></i>
+        搜索
+      </a>
+    </li>
+  </ul>
+</nav>
+<nav class="navbar navbar-bottom">
+  <ul class="nav">
+    <li class="nav-item">
+      <div class="totop" id="totop">
+  <i class="fe fe-rocket"></i>
+</div>
+    </li>
+    <li class="nav-item">
+      
+        <a class="nav-item-link" target="_blank" href="/atom.xml" title="RSS Feed">
+          <i class="fe fe-feed"></i>
+        </a>
+      
+    </li>
+  </ul>
+</nav>
+<div class="search-form-wrap">
+  <div class="local-search local-search-plugin">
+  <input type="search" id="local-search-input" class="local-search-input" placeholder="Search...">
+  <div id="local-search-result" class="local-search-result"></div>
+</div>
+</div>
+</aside>
 
-<script src="//ajax.googleapis.com/ajax/libs/jquery/2.0.3/jquery.min.js"></script>
+<script src="/js/jquery-2.0.3.min.js"></script>
+
+
+<script src="/js/jquery.justifiedGallery.min.js"></script>
+
+
+<script src="/js/lazyload.min.js"></script>
+
+
+<script src="/js/busuanzi-2.3.pure.min.js"></script>
 
 
   
-<link rel="stylesheet" href="/fancybox/jquery.fancybox.css">
+<script src="/fancybox/jquery.fancybox.min.js"></script>
+
+
+
 
   
-<script src="/fancybox/jquery.fancybox.pack.js"></script>
+<script src="/js/tocbot.min.js"></script>
+
+  <script>
+    // Tocbot_v4.7.0  http://tscanlin.github.io/tocbot/
+    tocbot.init({
+      tocSelector: '.tocbot',
+      contentSelector: '.article-entry',
+      headingSelector: 'h1, h2, h3, h4, h5, h6',
+      hasInnerContainers: true,
+      scrollSmooth: true,
+      positionFixedSelector: '.tocbot',
+      positionFixedClass: 'is-position-fixed',
+      fixedSidebarOffset: 'auto',
+    });
+  </script>
 
 
 
-
-<script src="/js/script.js"></script>
-
+<script src="/js/ocean.js"></script>
 
 
-
-  </div>
 </body>
 </html>
