@@ -1,37 +1,467 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-{% block page_class %}page-post-detail{% endblock %}
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="词法分析是编译的第一步，通常由词法分析器以字符流的形式扫描源代码文件，并识别出源代码中的特定字符串，如 标识符，关键字，特殊符号，算术符号等，这些符号统称为 Token（记号），Token 与自然语言中的单词类似，每一个Token 都是源程序中的信息单元。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="词法分析">
+<meta property="og:url" content="http://example.com/2019/07/09/ci-fa-fen-xi/index.html">
+<meta property="og:site_name" content="Z">
+<meta property="og:description" content="词法分析是编译的第一步，通常由词法分析器以字符流的形式扫描源代码文件，并识别出源代码中的特定字符串，如 标识符，关键字，特殊符号，算术符号等，这些符号统称为 Token（记号），Token 与自然语言中的单词类似，每一个Token 都是源程序中的信息单元。">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-07-09T03:48:09.000Z">
+<meta property="article:modified_time" content="2019-09-24T06:22:32.000Z">
+<meta property="article:author" content="zhuo guangming">
+<meta property="article:tag" content="词法分析">
+<meta property="article:tag" content="编译原理">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2019/07/09/ci-fa-fen-xi/">
 
 
-{% block content %}
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+  <title>词法分析 | Z</title>
+  
 
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
-{% endblock %}
+  <div class="site-meta">
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">热爱编程 | 烹饪 | 文科生</p>
+  </div>
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/07/09/ci-fa-fen-xi/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhuo guangming">
+      <meta itemprop="description" content="善读书可以治愚。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          词法分析
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-07-09 11:48:09" itemprop="dateCreated datePublished" datetime="2019-07-09T11:48:09+08:00">2019-07-09</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-24 14:22:32" itemprop="dateModified" datetime="2019-09-24T14:22:32+08:00">2019-09-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>词法分析是编译的第一步，通常由词法分析器以字符流的形式扫描源代码文件，并识别出源代码中的特定字符串，如 标识符，关键字，特殊符号，算术符号等，这些符号统称为 Token（记号），Token 与自然语言中的单词类似，每一个Token 都是源程序中的信息单元。</p>
+<a id="more"></a> 
+
+<p>词法分析的扫描程序的任务可以看做是格式匹配的一种特殊情况，主要的识别方法和格式说明通常有<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Regular_expression">正则表达式</a>和<a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Finite-state_machine">有穷自动机</a>两种。</p>
+<h1 id="Token-的表示"><a href="#Token-的表示" class="headerlink" title="Token 的表示"></a>Token 的表示</h1><p>Token 通常被定义成枚举类型来表示，但是在没有枚举类型的语言中则需要另外的表示形式，如老版本的 C 则看到如下的定义：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="meta-keyword">define</span> IF 256</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> THEN 257</span></span><br><span class="line"><span class="meta">#<span class="meta-keyword">define</span> ELSE 258</span></span><br></pre></td></tr></table></figure>
+
+<p>在有枚举的语言时定义 Token 时可以使用枚举类型来表达：</p>
+<figure class="highlight rust"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="class"><span class="keyword">enum</span> <span class="title">Token</span></span> &#123;</span><br><span class="line">  IF, ELSE, THEN, PLUS, DIV, </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<p>Token 作为一种逻辑表示必须与它们所表示的字符串区分开来，例如，IF 是一种 Token 类型但是与它表示的字符串“if”是不相同的，又如 NUMBER 表示为数字类型的 Token，其字符串为 123456，这是两种不同概念，Token 的字符串值也称串值(string value) 或者词义(lexeme)，某些 Token 只有一个串值，关键字就是如此，有些 Token 含有无限多的语义。</p>
+<p>与 Token 相关的值都是 Token 的属性，如 NUMBER 的串值“123456”等等，词法分析阶段需要收集并记录好这些相关的属性和 Token，因此需要用到一种数据类型来表示，这种数据类型叫做 记号记录（token record），在 C 中可以用结构体来表示：</p>
+<figure class="highlight c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="class"><span class="keyword">struct</span> &#123;</span></span><br><span class="line">  Token tokenval;</span><br><span class="line">  <span class="keyword">char</span>* stringval;</span><br><span class="line">  <span class="keyword">int</span> numval;</span><br><span class="line">&#125; TokenRecord;</span><br></pre></td></tr></table></figure>
+
+<h1 id="正则表达式"><a href="#正则表达式" class="headerlink" title="正则表达式"></a>正则表达式</h1><p>词法分析阶段使用正则表达式来定义和识别格式是常用的方法，一个正则表达式可以看做是一种模式，在输入中可以匹配一个或多个符合模式定义的子串，所以一个正则表达式表示的是一个集合，这个集合包含了所有匹配的串，这个集合也称为有正则表达式生成的语言（language generated by the regular expression）写作 L(r)，此处的“语言”与程序设计语言没有特殊关系，一般是 ASCII 字符的集合或某个子集，集合的元素称为 符号（symbol），符号的集合称为字母表，用希腊字母表示为 ∑ （sigma）</p>
+<h2 id="基本正则表达式"><a href="#基本正则表达式" class="headerlink" title="基本正则表达式"></a>基本正则表达式</h2><p>基本的正则表达式由单个符号构成，利用基本的正则表达式可以再构造出复杂的正则表达式，它同构造算术表达式的方法类似。</p>
+<ol>
+<li>假设 a 是字母表 ∑ 中的任意字符，若要编写匹配字符 a 的正则表达式则为 L(a) = {a}</li>
+<li>空串用 <em>L</em>(ε) = {ε}来定义，假设 e 代表不包含任何字符的串</li>
+<li>与任何串都不匹配的正则表达式定义为 L(Φ) = {}，表示与任何串都不匹配的正则，它是一个空集</li>
+</ol>
+<h2 id="正则表达式的基本运算"><a href="#正则表达式的基本运算" class="headerlink" title="正则表达式的基本运算"></a>正则表达式的基本运算</h2><p>正则表达式有三种基本运算，1. 选择 2. 连结 3. 闭包。</p>
+<ol>
+<li>选择运算表示为从各个选择的对象中选择，用元字符 | 表示，如果 r 和 s 是正则表达式，则 r | s 可以匹配 r 或 s 的任意串，也可以看做是 L(s)和 L(r)的联合(union)</li>
+<li>连结运算是两个或多个正则表达式，例如有 r,s 两个正则表达式，他们的连结写作 rs,它匹配两串连结的任何一个串，例如：ab 匹配  “ab” 串，( a | b ) c 匹配 “ac”，”bc”</li>
+<li>闭包运算也可以叫重复运算，意思是匹配一次或者多次模式，假设有正则表达式 a*，它可以匹配，ε,a,aa,aaa,aaaaa…，这是一个无穷集的联合，但是其中的每个元素都是 a 中串的有穷连结。</li>
+</ol>
+<h2 id="编程语言记号的正则表达式"><a href="#编程语言记号的正则表达式" class="headerlink" title="编程语言记号的正则表达式"></a>编程语言记号的正则表达式</h2><p>在众多编程语言中，语言记号可以分为若干个标准的种类：1. 保留字(keyword)，2. 特殊符号，3. 标识符，4. 文字或常量。</p>
+<ol>
+<li>保留字也称为关键字，是编程语言中具有特定含义的字母表字符的固定串，例如 if，for，while 等等。</li>
+<li>特殊符号包含了运算符，赋值，等式，它们既可以是单个字符也可以是多个字符，取决于具体的编程语言设计。</li>
+<li>标识符是一类编程语言中约定的一种命名规则，比如变量名，函数签名等等。</li>
+<li>文字和常量包含了数字常量和字符串常量，如 123，3.14159，“hello”, “world” 以及字符 ‘a’, ‘b’ 等等直接可以按字面量取值的符号。</li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat.jpeg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E8%AF%8D%E6%B3%95%E5%88%86%E6%9E%90/" rel="tag"># 词法分析</a>
+              <a href="/tags/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/" rel="tag"># 编译原理</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2019/03/02/ji-zhu-lei-rss-yuan-fen-xiang/" rel="prev" title="技术类 RSS 源分享">
+      <i class="fa fa-chevron-left"></i> 技术类 RSS 源分享
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/08/25/vscode-remote-yuan-cheng-kai-fa-ti-yan-bao-gao/" rel="next" title="vscode remote 远程开发体验报告">
+      vscode remote 远程开发体验报告 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Token-%E7%9A%84%E8%A1%A8%E7%A4%BA"><span class="nav-number">1.</span> <span class="nav-text">Token 的表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">正则表达式</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.1.</span> <span class="nav-text">基本正则表达式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F%E7%9A%84%E5%9F%BA%E6%9C%AC%E8%BF%90%E7%AE%97"><span class="nav-number">2.2.</span> <span class="nav-text">正则表达式的基本运算</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%96%E7%A8%8B%E8%AF%AD%E8%A8%80%E8%AE%B0%E5%8F%B7%E7%9A%84%E6%AD%A3%E5%88%99%E8%A1%A8%E8%BE%BE%E5%BC%8F"><span class="nav-number">2.3.</span> <span class="nav-text">编程语言记号的正则表达式</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhuo guangming</p>
+  <div class="site-description" itemprop="description">善读书可以治愚。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zgm4z" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zgm4z" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zgm.developer@gmail.com" title="E-Mail → mailto:zgm.developer@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhuo guangming</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

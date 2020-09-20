@@ -1,37 +1,596 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-{% block page_class %}page-post-detail{% endblock %}
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="好久没有更新博客了，上个学期事情也不是很多，大概是因为开始了新的阶段，有点不适应一直不在状态，没有学到多少新东西，感觉自己懒惰了一个学期以至于期末的时候成绩很不理想，今天又是新学期的开始，早在寒假的时候就已经列好了今年的计划，状态也调整好了，要开始全力以赴了，这篇文章不是技术文，就是分享一下自己平时的阅读工具和自己的一些 RSS 订阅源，阅读优秀的人写的文章确实很有助于打开自己的眼界，作为一个技术">
+<meta property="og:type" content="article">
+<meta property="og:title" content="技术类 RSS 源分享">
+<meta property="og:url" content="http://example.com/2019/03/02/ji-zhu-lei-rss-yuan-fen-xiang/index.html">
+<meta property="og:site_name" content="Z">
+<meta property="og:description" content="好久没有更新博客了，上个学期事情也不是很多，大概是因为开始了新的阶段，有点不适应一直不在状态，没有学到多少新东西，感觉自己懒惰了一个学期以至于期末的时候成绩很不理想，今天又是新学期的开始，早在寒假的时候就已经列好了今年的计划，状态也调整好了，要开始全力以赴了，这篇文章不是技术文，就是分享一下自己平时的阅读工具和自己的一些 RSS 订阅源，阅读优秀的人写的文章确实很有助于打开自己的眼界，作为一个技术">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2019-03-02T15:00:02.000Z">
+<meta property="article:modified_time" content="2019-09-24T06:20:02.000Z">
+<meta property="article:author" content="zhuo guangming">
+<meta property="article:tag" content="RSS">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="http://example.com/2019/03/02/ji-zhu-lei-rss-yuan-fen-xiang/">
 
 
-{% block content %}
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+  <title>技术类 RSS 源分享 | Z</title>
+  
 
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
-{% endblock %}
+  <div class="site-meta">
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">热爱编程 | 烹饪 | 文科生</p>
+  </div>
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2019/03/02/ji-zhu-lei-rss-yuan-fen-xiang/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhuo guangming">
+      <meta itemprop="description" content="善读书可以治愚。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          技术类 RSS 源分享
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2019-03-02 23:00:02" itemprop="dateCreated datePublished" datetime="2019-03-02T23:00:02+08:00">2019-03-02</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-09-24 14:20:02" itemprop="dateModified" datetime="2019-09-24T14:20:02+08:00">2019-09-24</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>好久没有更新博客了，上个学期事情也不是很多，大概是因为开始了新的阶段，有点不适应一直不在状态，没有学到多少新东西，感觉自己懒惰了一个学期以至于期末的时候成绩很不理想，今天又是新学期的开始，早在寒假的时候就已经列好了今年的计划，状态也调整好了，要开始全力以赴了，这篇文章不是技术文，就是分享一下自己平时的阅读工具和自己的一些 RSS 订阅源，阅读优秀的人写的文章确实很有助于打开自己的眼界，作为一个技术人，阅读习惯是不能不养成的。</p>
+<a id="more"></a>
+
+<h1 id="什么是-RSS-？"><a href="#什么是-RSS-？" class="headerlink" title="什么是 RSS ？"></a>什么是 RSS ？</h1><blockquote>
+<p><strong>RSS</strong>（<strong>简易信息聚合</strong>）是一种<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E6%B6%88%E6%81%AF%E4%BE%86%E6%BA%90">消息来源</a>格式规范，用以<strong>聚合经常发布更新数据的网站</strong>，例如<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%83%A8%E8%90%BD%E6%A0%BC">博客</a>文章、新闻、<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E9%9F%B3%E8%A8%8A">音频</a>或<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E8%A6%96%E8%A8%8A">视频</a>的网摘。RSS文件（或称做摘要、网络摘要、或频更新，提供到频道）包含全文或是节录的文字，再加上发布者所订阅之网摘数据和授权的元数据</p>
+</blockquote>
+<p>以上是 wikipedia 的解释，简单点说就是 一种用于个人发布或订阅自己感兴趣的数据源的技术，通常我们会在发布文章时生成 RSS 信息然后订阅了你的源的用户即可看到你的更新而不需要来到你的站点才能看到新的文章，比如博主的订阅源为 <a target="_blank" rel="noopener" href="https://zgm4z.me/feed.xml">https://zgm4z.me/feed.xml</a>，在订阅工具里填入这个地址即可订阅博主的文章发布动态。</p>
+<h1 id="工具推荐"><a href="#工具推荐" class="headerlink" title="工具推荐"></a>工具推荐</h1><p>博主在用的订阅工具是 <a target="_blank" rel="noopener" href="https://feedly.com/">feedly</a>，这是国外一家公司开发的 RSS 订阅工具，可以使用网页版也可以使用 APP 并且数据是同步的，还可以使用第三方账号来注册，个人非常喜欢。</p>
+<blockquote>
+<p><strong>Feedly</strong>是一个<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/RSS%E8%81%9A%E5%90%88%E5%99%A8">RSS聚合器</a>应用程序，支持各种<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%BD%91%E9%A1%B5%E6%B5%8F%E8%A7%88%E5%99%A8">网页浏览器</a>和运行<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/IOS">iOS</a>或<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/Android">Android</a>的<a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%A7%BB%E5%8A%A8%E8%AE%BE%E5%A4%87">移动设备</a>，也是一个基于云端的服务。其从各种在线资源聚合用户自定的新闻订阅源，并可与他人分享。Feedly由DevHD于2008年推出。</p>
+</blockquote>
+<h1 id="技术类-RSS-源推荐"><a href="#技术类-RSS-源推荐" class="headerlink" title="技术类 RSS 源推荐"></a>技术类 RSS 源推荐</h1><p>以下是博主订阅的一些博客，基本上大部分都是技术类的博客。</p>
+<ol>
+<li><a target="_blank" rel="noopener" href="http://hi.baidu.com/inking26/rss">Inking</a></li>
+<li><a target="_blank" rel="noopener" href="http://xs-sniper.com/blog/feed">Billy (BK) Rios</a></li>
+<li><a target="_blank" rel="noopener" href="http://soroush.secproject.com/blog/feed/">Soroush</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.gnucitizen.org/feed/">GNUCITIZEN</a></li>
+<li><a target="_blank" rel="noopener" href="http://kyleosborn.org/feed/">Kos Security</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.phpweblog.net/GaRY/rss.aspx">PHP博客-GaRY’s Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.virusest.com/rss.xml">virusest’s blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.sina.com.cn/rss/streethacker.xml">Street Hacker</a></li>
+<li><a target="_blank" rel="noopener" href="http://kuza55.blogspot.com/feeds/posts/default">Alex’s Corner</a></li>
+<li><a target="_blank" rel="noopener" href="http://thomascannon.net/blog/rss.xml">thomascannon.net Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://pentest.cc/?feed=rss2">mickey’s blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://manicode.blogspot.com/feeds/posts/default">Manicode</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.0x000000.com/rss.php">0x000000</a></li>
+<li><a target="_blank" rel="noopener" href="http://hi.baidu.com/webhacking/rss">Gray Hat</a></li>
+<li><a target="_blank" rel="noopener" href="http://tacticalwebappsec.blogspot.com/feeds/posts/default">Tactical WAS</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.oldjun.com/blog/index.php/rss/">oldjun’s blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://radi.r-n-d.org/feeds/posts/default">radi::blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds2.feedburner.com/securethoughts">SecureThoughts.com</a></li>
+<li><a target="_blank" rel="noopener" href="http://hi.baidu.com/kevin2600/rss">旺财的奋斗</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.pulog.org/rss.xml">BugZone</a></li>
+<li><a target="_blank" rel="noopener" href="http://sirdarckcat.blogspot.com/feeds/posts/default">sirdarckcat</a></li>
+<li><a target="_blank" rel="noopener" href="http://shiflett.org/feeds/blog/">Chris Shiflett</a></li>
+<li><a target="_blank" rel="noopener" href="http://hi.baidu.com/rayh4c/rss">RAyh4c的黑盒子</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.feedburner.com/JeremiahGrossman">Grossman</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.sectop.com/?feed=rss2">DoDo’s Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.thespanner.co.uk/feed/">The Spanner</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.0xss.cn/feed.php">r0eXper Team</a></li>
+<li><a target="_blank" rel="noopener" href="http://evilcos.me/?feed=rss2">EVILCOS</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.didierstevens.com/feed">Didier Stevens</a></li>
+<li><a target="_blank" rel="noopener" href="http://hackademix.net/feed/">hackademix.net</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.tralfamadore.com/atom.xml">tralfamadore.com</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.guya.net/feed">GUYA.NET</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.kotowicz.net/feeds/posts/default">koto -XSSChEF</a></li>
+<li><a target="_blank" rel="noopener" href="http://horicky.blogspot.com/feeds/posts/default">Ricky Ho</a></li>
+<li><a target="_blank" rel="noopener" href="http://feed.feedsky.com/nosqlfan">NoSQLfan</a></li>
+<li><a target="_blank" rel="noopener" href="http://coolshell.cn/feed/">酷壳 - CoolShell.cn</a></li>
+<li><a target="_blank" rel="noopener" href="http://news.dbanotes.net/rss">Startup News</a></li>
+<li><a target="_blank" rel="noopener" href="http://insight-labs.org/?feed=rss2">Insight-labs</a></li>
+<li><a target="_blank" rel="noopener" href="http://secinn.appspot.com/planet/feed?site=all">Planet - All</a></li>
+<li><a target="_blank" rel="noopener" href="http://rss.packetstormsecurity.org/files/tags/paper/">Whitepaper Files ≈ Packet Storm</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.defcon.org/defconrss.xml">DEFCON</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.notsosecure.com/folder2/feed">www.notsosecure.com</a></li>
+<li><a target="_blank" rel="noopener" href="http://rss.packetstormsecurity.org/files/tags/tool/">Security Tool Files ≈ Packet Storm</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.feedburner.com/blogspot/armorize_cht?format=xml">阿碼外傳</a></li>
+<li><a target="_blank" rel="noopener" href="http://ha.ckers.org/blog/feed/">ha.ckers.org</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ush.it/feed/">ush.it</a></li>
+<li><a target="_blank" rel="noopener" href="http://googleonlinesecurity.blogspot.com/atom.xml">Google Security</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.exploit-db.com/feed">Exploits Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://thexploit.com/feed/rss/">TheXploit | Security Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.exploit-db.com/rss.php">Exploit-DB</a></li>
+<li><a target="_blank" rel="noopener" href="http://drops.wooyun.org/feed">WooYun知识库</a></li>
+<li><a target="_blank" rel="noopener" href="https://www.blackhat.com/BlackHatRSS.xml">Black Hat A</a></li>
+<li><a target="_blank" rel="noopener" href="http://threatpost.com/feed/">Threatpost - English - Global - threatpost.com</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.80vul.com/?q=rss.xml/">80vul Quality Assurance Group - 一群靠谱的年轻人!</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.coresec.org/feed/">Coresec.org - Information Security Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds2.feedburner.com/HoneynetProjectAggregated">Honeynet</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.backtrack-linux.org/feed">BackTrack Linux</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.metasploit.com/feeds/posts/default">Metasploit</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.andlabs.org/feeds/posts/default">AnD Labs</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.aliued.cn/feed/">阿里巴巴（中文站）用户体验设计部博客</a></li>
+<li><a target="_blank" rel="noopener" href="http://feed.feedsky.com/chinawebanalytics">网站分析在中国</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.whatwg.org/feed/">WHATWG</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds2.feedburner.com/Webappers">WebAppers</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.techug.com/feed">程序师</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/dog250/rss/list">Netfilter,iptables/OpenVPN/TCP guard:-(</a></li>
+<li><a target="_blank" rel="noopener" href="http://antonioleiva.com/feed/">Antonio Leiva</a></li>
+<li><a target="_blank" rel="noopener" href="http://feedmaker.kindle4rss.com/feeds/gh_10a6b96351a9.weixin.xml">架构师之路</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.zhihu.com/rss">知乎每日精选</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.feedburner.com/TheWillWillWeb">The Will Will Web</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.codedata.com.tw/feed.php">Code &amp; Data</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/rubylouvre/rss">博客园_Ruby’s Louvre</a></li>
+<li><a target="_blank" rel="noopener" href="http://androidniceties.tumblr.com/rss">Android Niceties</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.freebuf.com/feed">FreeBuf互联网安全新媒体平台</a></li>
+<li><a target="_blank" rel="noopener" href="http://wanqu.co/feed">湾区日报第1316期 2019/02/28</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.didispace.com/atom.xml">程序猿DD</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.oschina.net/blog/rss">开源中国社区最新推荐博客</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ibm.com/developerworks/cn/views/rss/customrssatom.jsp?zone_by=Linux&type_by=Articles&type_by=Tutorials&search_by=&day=1&month=01&year=2005&max_entries=20&feed_by=rss&isGUI=true&Submit.x=34&Submit.y=9">IBM Developer 中国 : Linux : Articles,Tutorials</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/feed/architecture-design">InfoQ - 架构 &amp; 设计</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.codeceo.com/feed/">码农网</a></li>
+<li><a target="_blank" rel="noopener" href="http://ifeve.com/feed/">并发编程网 – ifeve.com</a></li>
+<li><a target="_blank" rel="noopener" href="http://top.jobbole.com/feed/">资讯 – 伯乐在线</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ibm.com/developerworks/cn/views/global/rss/libraryview.jsp">IBM Developer 中国 : 文档库</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.rowkey.me/atom.xml">后端技术杂谈 | 飒然Hang</a></li>
+<li><a target="_blank" rel="noopener" href="http://colobu.com/atom.xml">鸟窝</a></li>
+<li><a target="_blank" rel="noopener" href="http://community.csdn.net/ASCX/NewHomePage/ModeratorRecommend/ModeratorRecommendTech.xml">CSDN → 版主推荐-技术区 → RSS</a></li>
+<li><a target="_blank" rel="noopener" href="http://tech.youzan.com/rss/">有赞技术团队</a></li>
+<li><a target="_blank" rel="noopener" href="http://feedmaker.kindle4rss.com/feeds/archtime.weixin.xml">聊聊架构</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/Luoshengyang/rss/list">老罗的Android之旅</a></li>
+<li><a target="_blank" rel="noopener" href="https://segmentfault.com/feeds/blogs">SegmentFault 最新的文章</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.xiaohui.com/rss/">XiaoHui.com</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.infoq.com/cn/feed">InfoQ</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/lanphaday/Rss.aspx">赖勇浩的编程私伙局</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.daqianduan.com/feed/">大前端</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.importnew.com/feed">ImportNew</a></li>
+<li><a target="_blank" rel="noopener" href="http://next.36kr.com/feed">NEXT</a></li>
+<li><a target="_blank" rel="noopener" href="http://fex.baidu.com/feed.xml">百度 FEX 团队</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ideawu.net/blog/feed">idea’s blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://isvincent.blogspot.com/feeds/posts/default">火星人的天空之城</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.ruanyifeng.com/blog/atom.xml">阮一峰的网络日志</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/wayfarer/rss">博客园_逸见</a></li>
+<li><a target="_blank" rel="noopener" href="http://feedmaker.kindle4rss.com/feeds/bbc-learningenglish-chinese.xml">BBC 英语教学</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.trinea.cn/feed/">Trinea, Focus on Android, Java, Open Source, Performance Optimization</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/rss">博客园_首页</a></li>
+<li><a target="_blank" rel="noopener" href="http://coolshell.cn/feed">酷 壳 – CoolShell</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/Solstice/rss/list">陈硕的Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.gracecode.com/gracecode/">無標題文檔</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.feedburner.com/GrokkingAndroid">Grokking Android</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.danlew.net/rss/">Dan Lew Codes</a></li>
+<li><a target="_blank" rel="noopener" href="https://blog.csdn.net/guolin_blog/rss/list">郭霖的专栏</a></li>
+<li><a target="_blank" rel="noopener" href="http://div.io/feed/pro">Div.IO 专栏文章</a></li>
+<li><a target="_blank" rel="noopener" href="http://taobaofed.org/atom.xml">Taobao FED | 淘宝前端团队</a></li>
+<li><a target="_blank" rel="noopener" href="https://taozj.org/atom.xml">桃子的博客志</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.52nlp.cn/feed">我爱自然语言处理</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.hollischuang.com/feed/">HollisChuang’s Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://android.cyrilmottier.com/?feed=rss2">Cyril Mottier</a></li>
+<li><a target="_blank" rel="noopener" href="http://feedmaker.kindle4rss.com/feeds/almosthuman2014.weixin.xml">机器之心</a></li>
+<li><a target="_blank" rel="noopener" href="https://pub.dartlang.org/feed.atom">Pub Packages for Dart</a></li>
+<li><a target="_blank" rel="noopener" href="http://riggaroo.co.za/feed/">Riggaroo – Android Dev</a></li>
+<li><a target="_blank" rel="noopener" href="http://hackernews.cc/feed">HackerNews</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.lcode.org/feed/">江清清的技术专栏</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.zhangxinxu.com/wordpress/?feed=rss2">张鑫旭-鑫空间-鑫生活</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.75team.com/weekly/rss.php">奇舞周刊</a></li>
+<li><a target="_blank" rel="noopener" href="http://chris.banes.me/atom.xml">Chris Banes</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.bbc.co.uk/china/learningenglish/index.xml">BBC China | 英语教学 | Learning English</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.feedburner.com/blogspot/hsDu">Android Developers Blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/sinyu890807/rss/list">郭霖的专栏</a></li>
+<li><a target="_blank" rel="noopener" href="http://weekly.techbridge.cc/feed">TechBridge Weekly</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.jobbole.com/feed/">文章 – 伯乐在线</a></li>
+<li><a target="_blank" rel="noopener" href="http://teddy-chen-tw.blogspot.com/feeds/posts/default">搞笑談軟工</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.csdn.net/heiyeshuwu/Rss.aspx">heiyeluren的blog（黑夜路人的开源世界）</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.w3cplus.com/rss.xml">w3cplus</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.feedburner.com/vgod/blog">vgod’s blog</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.nginx.cn/feed">架构 – nginx.cn</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.75team.com/rss.html">奇舞团博客</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.androidweekly.cn/rss/">Android 开发技术周报</a></li>
+<li><a target="_blank" rel="noopener" href="http://androidperformance.com/atom.xml">Android Performance</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.tuicool.com/mags/rss_programming.rss">推酷《编程狂人》周刊</a></li>
+<li><a target="_blank" rel="noopener" href="http://gold.xitu.io/rss">掘金</a></li>
+<li><a target="_blank" rel="noopener" href="http://huoding.com/feed">火丁笔记</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.jobbole.com/category/android/feed/">Android – 文章 – 伯乐在线</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.feedburner.com/StylingAndroid">Styling Android</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds2.feedburner.com/webarch">DBA Notes | 闲思录</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.cnblogs.com/xrq730/rss">博客园_五月的仓颉</a></li>
+<li><a target="_blank" rel="noopener" href="http://io-meter.com/atom.xml">IO-meter</a></li>
+<li><a target="_blank" rel="noopener" href="http://web.jobbole.com/feed/">WEB前端 – 伯乐在线</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.udpwork.com/feed">IT牛人博客聚合网站</a></li>
+<li><a target="_blank" rel="noopener" href="http://feeds.googleblog.cn/GoogleDevelopersChineseLanguageBlog">谷歌开发者中文博客</a></li>
+<li><a target="_blank" rel="noopener" href="http://blog.codingnow.com/atom.xml">云风的 BLOG</a></li>
+<li><a target="_blank" rel="noopener" href="http://zhihurss.miantiao.me/section/id/2">瞎扯 - 知乎日报</a></li>
+<li><a target="_blank" rel="noopener" href="http://www.qianduan.net/feed">前端观察</a></li>
+<li><a target="_blank" rel="noopener" href="http://caibaojian.com/feed">前端开发博客</a></li>
+</ol>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat.jpeg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/RSS/" rel="tag"># RSS</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/09/03/guan-yu-web-api-she-ji-de-yi-xie-si-kao/" rel="prev" title="关于 WEB API 设计的一些思考">
+      <i class="fa fa-chevron-left"></i> 关于 WEB API 设计的一些思考
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2019/07/09/ci-fa-fen-xi/" rel="next" title="词法分析">
+      词法分析 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-RSS-%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">什么是 RSS ？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B7%A5%E5%85%B7%E6%8E%A8%E8%8D%90"><span class="nav-number">2.</span> <span class="nav-text">工具推荐</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8A%80%E6%9C%AF%E7%B1%BB-RSS-%E6%BA%90%E6%8E%A8%E8%8D%90"><span class="nav-number">3.</span> <span class="nav-text">技术类 RSS 源推荐</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhuo guangming</p>
+  <div class="site-description" itemprop="description">善读书可以治愚。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zgm4z" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zgm4z" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zgm.developer@gmail.com" title="E-Mail → mailto:zgm.developer@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhuo guangming</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>

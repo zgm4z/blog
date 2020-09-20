@@ -1,37 +1,588 @@
-{% extends '_layout.swig' %}
-{% import '_macro/post.swig' as post_template %}
-{% import '_macro/sidebar.swig' as sidebar_template %}
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.2.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
 
 
-{% block title %}{{ page.title }} | {{ config.title }}{% endblock %}
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
 
-{% block page_class %}page-post-detail{% endblock %}
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"example.com","root":"/","scheme":"Muse","version":"7.8.0","exturl":false,"sidebar":{"position":"left","display":"always","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":false,"show_result":false,"style":null},"back2top":{"enable":true,"sidebar":false,"scrollpercent":false},"bookmark":{"enable":false,"color":"#222","save":"auto"},"fancybox":false,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":false,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}}};
+  </script>
+
+  <meta name="description" content="鉴对于 AJAX 的了解都是在 jQuery 封装的 API 上，所以我决定写一篇关于最原始的 AJAX 技术细节的文章，带领大家深入的了解这种技术的诞生和原理，博主近期专注于写 web 开发相关的文章，所有文章都是自己查阅标准文档加上自己的理解写出来，尽量做到符合标准，当然有时候会存在理解错误的地方，为了方便大家查证，文章开头或者最后一章都会给出查阅的资料链接，相关的标准文档链接 (如果有)，多">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Asynchronous JavaScript and XML (AJAX) 详解">
+<meta property="og:url" content="http://example.com/2018/08/27/asynchronous-javascript-and-xml-ajax-xiang-jie/index.html">
+<meta property="og:site_name" content="Z">
+<meta property="og:description" content="鉴对于 AJAX 的了解都是在 jQuery 封装的 API 上，所以我决定写一篇关于最原始的 AJAX 技术细节的文章，带领大家深入的了解这种技术的诞生和原理，博主近期专注于写 web 开发相关的文章，所有文章都是自己查阅标准文档加上自己的理解写出来，尽量做到符合标准，当然有时候会存在理解错误的地方，为了方便大家查证，文章开头或者最后一章都会给出查阅的资料链接，相关的标准文档链接 (如果有)，多">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://www.plantuml.com/plantuml/png/qz1KS2rBpIi9IInAJorHiAdHrLK0YaNu-dYKb9GK1AKMbgOMbo0fuOBB8YGnzQCf0G00">
+<meta property="og:image" content="http://www.plantuml.com/plantuml/png/VOqn3i9040FxlE9wdf261Ya5D8Y2TY4cYfJi1f-F1l5t83M7Iu_6tcOPLUQf6LtWpQv8vyE-axGSSI_8sZtWEXa7A3sRzCrcxJhpVW9J-1JMhqFjRxum1YBd2hPBL5MGmRP-Mq4QPqJH7n7-SLzl">
+<meta property="og:image" content="http://www.plantuml.com/plantuml/png/bL9RJnDT57tlhzYF9VGBdvUtnd2X4qi2hMafySqSUhRj96VE6S-bs1WJK8dHI8W1Bv64n2SJ7mHY157uETFM9_-2PsPwcP7smHUOxhtMtckjVUQK9b8RZsLShb7U9tM4kolBHQtz2Zumg3GyoW3Cp41mTDux-TXzUThPt0esBphxvy7k-ywxq-w7Py71OU_uQV3yilFcs8AddHPoNIISCfGWk4H2stQFndgJy0RcCsCdsk9_TS7jHiELs-18GJM5r50hLPtIAjo2__CJCUKxJiafMCoroPYYCrzmAjLx5MVHMLgBqDSdevVByuMbqcqBkZ4PL2YN78ku6I92vt-r8-VLq7dU6WvsF_UEVWOdXvtDJxylNeNVks-3oxtWnKuSXOqocSPq-X0rdmb2mKJ_eddRNtjR-vRKh_K3ZQJOTjDIeNTqrZbvycjxftlv9VwRaia4Ru1sFHH6vyFEkX0C2OSDLpSN9LBasYLCzVqDnmPxEy6F_Ux1TwiXfDMgQrKjNJjCel9jKbYhB8yyZuacV0z6fI4BROtnc7vx5H_gD8Jmzd15VlpcY7GrligWtVOHPE97x2tQyhhtxGoQsX_a5XiSFUoMS2a87tas8TL3tHGq1oCbHhAf_B_XSp18dgWsh-SiIxk24pQ2pO9HA3dnqBuuRfZb97e-KMf3I1htaliLwdu4HIGKPL9BE2q7YKABC8CfCgVPR47KZOTSWv2m86XxYRjwQXRMxUVLVMJTtZSR5J9XiEdBpa83XxSOBoYa9YaXOvwnD4bban6tK4gNuehhHIVD5iehWxHjATRoE3DdpHYF_G40">
+<meta property="og:image" content="http://www.plantuml.com/plantuml/png/SoWkIImgAStDuShCAqajIajCJbK8ACfFBqejBdOjIyqhKQZcKW02xQJy_9pKn3o5dDIyz98Cv_pSWjAInAISL6i5VVsd_QjUhD_zVa_FiwaRdlMkUpbr_zDTovxDMFzqmhAd_UjVh5luVDrqY2cbUSMPwNcfAGev-NdfC28n9JK5nPWdkvS-wrlwRCgsfnqRdizgWPZwh64ta87Jc9ByaiGS55E06j0rrt8vfEQb07qB0000">
+<meta property="article:published_time" content="2018-08-27T03:35:46.000Z">
+<meta property="article:modified_time" content="2019-12-29T05:06:49.000Z">
+<meta property="article:author" content="zhuo guangming">
+<meta property="article:tag" content="前端">
+<meta property="article:tag" content="AJAX">
+<meta property="article:tag" content="web">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://www.plantuml.com/plantuml/png/qz1KS2rBpIi9IInAJorHiAdHrLK0YaNu-dYKb9GK1AKMbgOMbo0fuOBB8YGnzQCf0G00">
+
+<link rel="canonical" href="http://example.com/2018/08/27/asynchronous-javascript-and-xml-ajax-xiang-jie/">
 
 
-{% block content %}
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'zh-CN'
+  };
+</script>
 
-  <div id="posts" class="posts-expand">
-    {{ post_template.render(page) }}
+  <title>Asynchronous JavaScript and XML (AJAX) 详解 | Z</title>
+  
 
-    <div class="post-spread">
-      {% if theme.jiathis %}
-        {% include '_partials/share/jiathis.swig' %}
-      {% elseif theme.baidushare %}
-        {% include '_partials/share/baidushare.swig' %}
-      {% elseif theme.add_this_id %}
-        {% include '_partials/share/add-this.swig' %}
-      {% elseif theme.duoshuo_shortname and theme.duoshuo_share %}
-        {% include '_partials/share/duoshuo_share.swig' %}
-      {% endif %}
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
     </div>
   </div>
 
-{% endblock %}
+  <div class="site-meta">
 
-{% block sidebar %}
-  {{ sidebar_template.render(true) }}
-{% endblock %}
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">Z</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">热爱编程 | 烹饪 | 文科生</p>
+  </div>
 
-{% block script_extra %}
-  {% include '_scripts/pages/post-details.swig' %}
-{% endblock %}
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a>
+
+  </li>
+        <li class="menu-item menu-item-about">
+
+    <a href="/about/" rel="section"><i class="fa fa-user fa-fw"></i>关于</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>归档</a>
+
+  </li>
+  </ul>
+</nav>
+
+
+
+
+</div>
+    </header>
+
+    
+  <div class="back-to-top">
+    <i class="fa fa-arrow-up"></i>
+    <span>0%</span>
+  </div>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2018/08/27/asynchronous-javascript-and-xml-ajax-xiang-jie/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/avatar.gif">
+      <meta itemprop="name" content="zhuo guangming">
+      <meta itemprop="description" content="善读书可以治愚。">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="Z">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Asynchronous JavaScript and XML (AJAX) 详解
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">发表于</span>
+
+              <time title="创建时间：2018-08-27 11:35:46" itemprop="dateCreated datePublished" datetime="2018-08-27T11:35:46+08:00">2018-08-27</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">更新于</span>
+                <time title="修改时间：2019-12-29 13:06:49" itemprop="dateModified" datetime="2019-12-29T13:06:49+08:00">2019-12-29</time>
+              </span>
+
+          
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>鉴对于 AJAX 的了解都是在 jQuery 封装的 API 上，所以我决定写一篇关于最原始的 AJAX 技术细节的文章，带领大家深入的了解这种技术的诞生和原理，博主近期专注于写 web 开发相关的文章，所有文章都是自己查阅标准文档加上自己的理解写出来，尽量做到符合标准，当然有时候会存在理解错误的地方，为了方便大家查证，文章开头或者最后一章都会给出查阅的资料链接，相关的标准文档链接 (如果有)，多数标准在 <a target="_blank" rel="noopener" href="https://www.w3.org/TR/">https://www.w3.org/TR/</a>，<a target="_blank" rel="noopener" href="https://developer.mozilla.org/zh-CN/">https://developer.mozilla.org/zh-CN/</a> ，<a target="_blank" rel="noopener" href="https://www.rfc-editor.org/rfc-index.html">https://www.rfc-editor.org/rfc-index.html</a> 都可以找到。</p>
+<a id="more"></a>
+
+<h1 id="诞生的历史"><a href="#诞生的历史" class="headerlink" title="诞生的历史"></a>诞生的历史</h1><p>在上世纪 90 年代开发的网站都是完全由 HTML 写成，每一次服务器处理完成客户的请求都需要重新加载整个页面，严重浪费了很多服务器带宽，每次加载整个页面即使页面只是很少的一点数据变动，加重了服务器的负担，自然而然的人们想到使用异步的方式来局部刷新页面变化的部分，而不是整个页面重新加载，首次在 HTML 页面中加入异步技术的应该是 1995 年 Java 的第一个版本发布随之带来的 Java applets ( java 小程序 ) 实现的异步数据获取，浏览器运行 java applets 脚本与服务器交换数据，1996 年 IE 浏览器中加入 Iframe 元素支持局部刷新网页，1998年前后微软的一个开发组实现了一个允许客户端脚本发送 HTTP 请求的组件 ( XMLHTTP )，但是 ajax 这个词的真正诞生是源于 2005 年 2 月 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E5%82%91%E8%A5%BF%C2%B7%E8%A9%B9%E5%A7%86%E5%A3%AB%C2%B7%E8%B3%88%E7%91%9E%E7%89%B9">杰西·詹姆士·贾瑞特</a> 发表的一篇名为 <a target="_blank" rel="noopener" href="https://web.archive.org/web/20061107032631/http://www.adaptivepath.com/publications/essays/archives/000385.php">Ajax: A New Approach to Web Applications</a> 的文章，讨论了一种用让用 JavaScript 和 XML 来回传输数据达到网页异步刷新的技术，此后以 AJAX 来简称此种技术，在后来的时间里这种技术被广泛应用，逐步走向成熟和标准化，今天我们谈论的都是在标准化以后的内容。</p>
+<h1 id="标准化的历史进程"><a href="#标准化的历史进程" class="headerlink" title="标准化的历史进程"></a>标准化的历史进程</h1><p>如今在新版本的浏览器上 我们通常使用 XMLHttpRequest 接口来进行异步数据请求，但是在最初的 AJAX 技术发展中是先有了技术上的实现才发展出标准接口的，最初的 XMLHttpRequest 对象是 <a target="_blank" rel="noopener" href="https://zh.wikipedia.org/wiki/%E7%B6%B2%E9%A0%81%E8%B6%85%E6%96%87%E6%9C%AC%E6%87%89%E7%94%A8%E6%8A%80%E8%A1%93%E5%B7%A5%E4%BD%9C%E5%B0%8F%E7%B5%84">WHATWG</a> 在 HTML 规范工作中基于微软多年前的实现上定义的，到了 2006年移交到 W3C，此时的 XMLHttpReqeust 是以独立的工作草案进行开发的 ( XMLHttpRequest Level 2 )，直到 2011年底两个草案合并，此时，XMLHttpReqeust 对象从标准化的角度来说已经成为一个统一的定义，到了 2012 年底它又转移回到了 WHATWG。</p>
+<h1 id="标准化的-XMLHttpRequest-接口"><a href="#标准化的-XMLHttpRequest-接口" class="headerlink" title="标准化的 XMLHttpRequest 接口"></a>标准化的 XMLHttpRequest 接口</h1><p> 我们现在可以先来看一下 XMLHttpRequest 接口的一些属性和方法，其接口层次结构如下</p>
+<p><img src="http://www.plantuml.com/plantuml/png/qz1KS2rBpIi9IInAJorHiAdHrLK0YaNu-dYKb9GK1AKMbgOMbo0fuOBB8YGnzQCf0G00"></p>
+<p>EventTarget 是属于 <a target="_blank" rel="noopener" href="https://dom.spec.whatwg.org/#eventtarget">DOM 标准</a>的一个定义这里不进行讨论，我们将只重点关注 XMLHttpRequest 和 XMLHttpRequestEventTarget 接口，先来看一下各自定义了哪些属性和方法：</p>
+<h1 id="XMLHttpRequestEventTarget"><a href="#XMLHttpRequestEventTarget" class="headerlink" title="XMLHttpRequestEventTarget"></a>XMLHttpRequestEventTarget</h1><p><img src="http://www.plantuml.com/plantuml/png/VOqn3i9040FxlE9wdf261Ya5D8Y2TY4cYfJi1f-F1l5t83M7Iu_6tcOPLUQf6LtWpQv8vyE-axGSSI_8sZtWEXa7A3sRzCrcxJhpVW9J-1JMhqFjRxum1YBd2hPBL5MGmRP-Mq4QPqJH7n7-SLzl"><br>这个接口定义了一系列的事件处理函数，根据上面的继承结构我们也可以知道这些属性我们可以直接在 XMLHttpRequest 对象中直接绑定，这一系列的事件处理函数对应着 XMLHttpRequest 不同时机的状态会被调用，待会儿我们将会详细的介绍有几种状态，再来看 XMLHttpRequest 的定义：</p>
+<h1 id="XMLHttpRequest"><a href="#XMLHttpRequest" class="headerlink" title="XMLHttpRequest"></a>XMLHttpRequest</h1><p><img src="http://www.plantuml.com/plantuml/png/bL9RJnDT57tlhzYF9VGBdvUtnd2X4qi2hMafySqSUhRj96VE6S-bs1WJK8dHI8W1Bv64n2SJ7mHY157uETFM9_-2PsPwcP7smHUOxhtMtckjVUQK9b8RZsLShb7U9tM4kolBHQtz2Zumg3GyoW3Cp41mTDux-TXzUThPt0esBphxvy7k-ywxq-w7Py71OU_uQV3yilFcs8AddHPoNIISCfGWk4H2stQFndgJy0RcCsCdsk9_TS7jHiELs-18GJM5r50hLPtIAjo2__CJCUKxJiafMCoroPYYCrzmAjLx5MVHMLgBqDSdevVByuMbqcqBkZ4PL2YN78ku6I92vt-r8-VLq7dU6WvsF_UEVWOdXvtDJxylNeNVks-3oxtWnKuSXOqocSPq-X0rdmb2mKJ_eddRNtjR-vRKh_K3ZQJOTjDIeNTqrZbvycjxftlv9VwRaia4Ru1sFHH6vyFEkX0C2OSDLpSN9LBasYLCzVqDnmPxEy6F_Ux1TwiXfDMgQrKjNJjCel9jKbYhB8yyZuacV0z6fI4BROtnc7vx5H_gD8Jmzd15VlpcY7GrligWtVOHPE97x2tQyhhtxGoQsX_a5XiSFUoMS2a87tas8TL3tHGq1oCbHhAf_B_XSp18dgWsh-SiIxk24pQ2pO9HA3dnqBuuRfZb97e-KMf3I1htaliLwdu4HIGKPL9BE2q7YKABC8CfCgVPR47KZOTSWv2m86XxYRjwQXRMxUVLVMJTtZSR5J9XiEdBpa83XxSOBoYa9YaXOvwnD4bban6tK4gNuehhHIVD5iehWxHjATRoE3DdpHYF_G40"></p>
+<h1 id="state-的变化过程"><a href="#state-的变化过程" class="headerlink" title="state 的变化过程"></a>state 的变化过程</h1><p>如上图所示，XMLHttpRequest 具有如上的定义，还具有一系列的状态属性，这节将详细的描诉哪个时机对象处于哪个状态，对象的状态总是递进的，由 0-4 在不同的时机转移。</p>
+<table>
+<thead>
+<tr>
+<th>state</th>
+<th>numeric</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>UNSET</td>
+<td>0</td>
+<td>调用构造函数，对象成功创建时的初始状态，并且不会执行onreadystatechange</td>
+</tr>
+<tr>
+<td>OPENED</td>
+<td>1</td>
+<td>调用 open() 函数时将由 0 转入 1 ，执行 onreadystatechange</td>
+</tr>
+<tr>
+<td>HEADERS_RECEIVED</td>
+<td>2</td>
+<td>所有重定向已完成(如果有)，并且所有 http response header 被接收完毕，但是response body 还未接收，执行 onreadystatechange</td>
+</tr>
+<tr>
+<td>LOADING</td>
+<td>3</td>
+<td>response body 正在接收，但是未完成，执行 onreadystatechange</td>
+</tr>
+<tr>
+<td>DONE</td>
+<td>4</td>
+<td>完整的 http 响应报文已经接收完毕，或者在传输过程中发生错误，如无限重定向，连接中断等，到这一状态表示整个请求-响应的过程已经结束，最后一次执行 onreadystatechange</td>
+</tr>
+</tbody></table>
+<p>想要读取对象的状态我们只能通过 readState 属性来获取，这是一个只读属性，我们可以在 onreadystatechange 函数被调用时判断通过判断对象的状态来执行一些业务代码，但是有更好的办法来帮助我们在对象的不同时期插入我们的业务代码。</p>
+<h1 id="Event-Handler"><a href="#Event-Handler" class="headerlink" title="Event Handler"></a>Event Handler</h1><p>在传输数据前后会发生一系列事件，如果我们设置了响应的监听函数就会被调用，在相应的函数里插入我们的代码，即可运行自定义的处理过程，这里的事件监听函数是定义在 XMLHttpRequestEventTarget 接口上的，我们用一张表格详细的描诉每一种类的事件：</p>
+<table>
+<thead>
+<tr>
+<th>event</th>
+<th>define on</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>onloadstart</td>
+<td>ProgressEvent</td>
+<td>调用 send() 函数时，仅执行一次</td>
+</tr>
+<tr>
+<td>onprogress</td>
+<td>ProgressEvent</td>
+<td>正在传输数据，运行一次或多次，如果数据很大会持续调用这个函数，如果我们写的自定义下载组件就可以实时的监听下载进度</td>
+</tr>
+<tr>
+<td>onabort</td>
+<td>ProgressEvent</td>
+<td>当显示的调用 abort() 函数时会触发，仅运行一次</td>
+</tr>
+<tr>
+<td>onerror</td>
+<td>ProgressEvent</td>
+<td>当数据传输或者请求错误时，仅运行一次</td>
+</tr>
+<tr>
+<td>onload</td>
+<td>ProgressEvent</td>
+<td>当数据传输完毕，整个响应报文已经接收完毕，仅运行一次</td>
+</tr>
+<tr>
+<td>ontimeout</td>
+<td>ProgressEvent</td>
+<td>当请求超过我们设置 timeout 的属性值还没收到响应时，仅运行一次</td>
+</tr>
+<tr>
+<td>onloadend</td>
+<td>ProgressEvent</td>
+<td>一次异步请求完成，不管是错误还是成功都会触发，这是最后一个事件函数，仅运行一次，在 onabort，onerror，onload，ontimeout 任意一个监听函数被调用之后就执行</td>
+</tr>
+</tbody></table>
+<p>值得注意的一点是 onabort，onerror，onload，ontimeout 这四个事件函数是互斥的，如果任何其中一个被调用剩下的三个皆不会运行会直接跳到 onloadend 函数，整个异步请求结束，还有一个是 我们在事件处理函数中会接收到一个 ProgressEvent 类型的对象参数，顺带提一下它的定义:</p>
+<p><img src="http://www.plantuml.com/plantuml/png/SoWkIImgAStDuShCAqajIajCJbK8ACfFBqejBdOjIyqhKQZcKW02xQJy_9pKn3o5dDIyz98Cv_pSWjAInAISL6i5VVsd_QjUhD_zVa_FiwaRdlMkUpbr_zDTovxDMFzqmhAd_UjVh5luVDrqY2cbUSMPwNcfAGev-NdfC28n9JK5nPWdkvS-wrlwRCgsfnqRdizgWPZwh64ta87Jc9ByaiGS55E06j0rrt8vfEQb07qB0000"></p>
+<p>这个接口定义一些关于数据传输的进度属性，通过它我们可以实时的了解到传输进度。</p>
+<h1 id="XMLHttpRequest-对象成员函数"><a href="#XMLHttpRequest-对象成员函数" class="headerlink" title="XMLHttpRequest 对象成员函数"></a>XMLHttpRequest 对象成员函数</h1><table>
+<thead>
+<tr>
+<th>method</th>
+<th>description</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>open( method,url,sync=true,username=null,password=null )</td>
+<td>open() 函数用于设置请求的配置参数，在对象成功创建之后调用，method,url为必要参数，其他都是可选的，需要注意的是 可选的 async 参数已经不建议复制为 false，因为同步的请求会影响终端用户的体验，而且这个标志在 web平台上正在移除，尽管会很久，所以我建议 async 始终为 true</td>
+</tr>
+<tr>
+<td>send( body )</td>
+<td>发送请求，body 为可选参数，如果 open() 的 method 参数被设置为 GET 或 HEAD 则即使设置了 body 也会被忽略。</td>
+</tr>
+<tr>
+<td>abort()</td>
+<td>中断所有网络请求</td>
+</tr>
+<tr>
+<td>setRequestHeader(name, value)</td>
+<td>在 open() 之后 send() 之前调用，用以设置请求头，所设置的 name 必须符合 http 关于请求头的定义。</td>
+</tr>
+<tr>
+<td>getResponseHeader(name)</td>
+<td>读取指定的响应头信息</td>
+</tr>
+<tr>
+<td>getAllResponseHeaders()</td>
+<td>读取整个响应报文的头信息，返回为字符串形式</td>
+</tr>
+<tr>
+<td>overrideMimeType(mime)</td>
+<td>覆盖响应头信息的Content-Type的值，用以改变数据的类型</td>
+</tr>
+</tbody></table>
+<h1 id="XMLHttpRequest-对象成员属性"><a href="#XMLHttpRequest-对象成员属性" class="headerlink" title="XMLHttpRequest 对象成员属性"></a>XMLHttpRequest 对象成员属性</h1><p><strong>timeout</strong></p>
+<p>  配置请求超时，等待响应时间大于设置的值会触发 ontimeout 事件，单位是 milliseconds (毫秒)</p>
+<p><strong>withCredentials</strong></p>
+<p>如果这是一个跨源请求并且要求在请求中包含 TLS 客户端证书 ，cookies，或者认证信息( HTTP authentication ) 时设置为 true ， 否则设置为 false，默认初始值为 false，但是如果本次是一个 同源请求则不受这个属性设置的影响。</p>
+<p><strong>upload</strong></p>
+<p>我们注意到在 XMLHttpRequest 接口中有一个类型为 XMLHttpRequestUpload 的属性，这个接口本身没有定义任何成员只是简单的继承自 XMLHttpRequestEventTarget 同样具有一系列事件函数，但是这个接口是用于手机 数据发往服务器的信息和事件，前面我们说的 XMLHttpRequest 也有一系列相同的事件，一个是面向的是数据从服务器下载到客户端，一个面向的是从客户端上传数据到服务器。</p>
+<p><strong>responseType</strong></p>
+<p>可读写的一个属性，读的时候默认值返回空字符，写的时候可以设置为 “<code>arraybuffer</code>“, “<code>blob</code>“, “<code>document</code>“, “<code>json</code>“, “<code>text</code>“ 或者空字符串。</p>
+<p><strong>response</strong></p>
+<p>读取整个 response body，根据 <strong>responseType</strong> 的值不同也会返回不一样的值，如果 <strong>responseType</strong> 是空字符串或者 <strong>text</strong>并且状态为 LOADING 或者 DONE 返回原始的 response body，否则，如果关联的 <a target="_blank" rel="noopener" href="https://xhr.spec.whatwg.org/#response-object">response object</a> 对象是错误的或者 <strong>state</strong> 不是 DONE 则返回 null，其他情况下将根据具体的 <strong>responseType</strong> 返回响应的值</p>
+<p><strong>responseText</strong></p>
+<p>如果 <strong>responseType</strong> 不是空字符串或者 <strong>text</strong> 抛出异常，如果 <strong>state</strong> 不是LOADING 或 DONE 返回空字符串，否则返回 <a target="_blank" rel="noopener" href="https://xhr.spec.whatwg.org/#text-response">text response</a></p>
+<p><strong>responseXML</strong></p>
+<p>如果 <strong>responseType</strong> 不是空字符串或者 <strong>document</strong>，抛出异常，如果 <strong>state</strong> 不是LOADING 或 DONE 返回空字符串，<a target="_blank" rel="noopener" href="https://xhr.spec.whatwg.org/#response-object">response object</a> 必须不是 failure，否则返回 <a target="_blank" rel="noopener" href="https://xhr.spec.whatwg.org/#document-response">document response</a></p>
+<h1 id="结束语"><a href="#结束语" class="headerlink" title="结束语"></a>结束语</h1><p>本篇文章花费了博主很大心血，之前自己对于 ajax 技术的理解也没有这么深刻，为了写这篇文章我查阅了很多资料，自己动手写代码验证自己的猜想，虽然本文写的还很粗糙但是远比没有好，以后或许还会做一些勘误和增加一些实验性的代码，本篇文章会不定时的更新，目前的话就先写到这里还算比较完整了。</p>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a target="_blank" rel="noopener" href="https://xhr.spec.whatwg.org/">whatwg XMLHttpRequest Living Standard </a></p>
+<p><a target="_blank" rel="noopener" href="https://developer.mozilla.org/en-US/docs/Web/API/ProgressEvent/loaded">MDN</a></p>
+<p><a target="_blank" rel="noopener" href="https://dom.spec.whatwg.org/#eventtarget">whatwg DOM Living Standard</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+  <div class="followme">
+    <p>欢迎关注我的其它发布渠道</p>
+
+    <div class="social-list">
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/images/wechat.jpeg">
+            <span class="icon">
+              <i class="fab fa-weixin"></i>
+            </span>
+
+            <span class="label">WeChat</span>
+          </a>
+        </div>
+
+        <div class="social-item">
+          <a target="_blank" class="social-link" href="/atom.xml">
+            <span class="icon">
+              <i class="fa fa-rss"></i>
+            </span>
+
+            <span class="label">RSS</span>
+          </a>
+        </div>
+    </div>
+  </div>
+
+
+      <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E5%89%8D%E7%AB%AF/" rel="tag"># 前端</a>
+              <a href="/tags/AJAX/" rel="tag"># AJAX</a>
+              <a href="/tags/web/" rel="tag"># web</a>
+          </div>
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2018/08/25/shi-yong-angular-cli-chuang-jian-zi-ji-de-zu-jian-ku-bing-fa-bu-dao-npm-cang-ku/" rel="prev" title="使用 angular-cli 创建自己的组件库并发布到 NPM 仓库">
+      <i class="fa fa-chevron-left"></i> 使用 angular-cli 创建自己的组件库并发布到 NPM 仓库
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2018/09/03/guan-yu-web-api-she-ji-de-yi-xie-si-kao/" rel="next" title="关于 WEB API 设计的一些思考">
+      关于 WEB API 设计的一些思考 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%9E%E7%94%9F%E7%9A%84%E5%8E%86%E5%8F%B2"><span class="nav-number">1.</span> <span class="nav-text">诞生的历史</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96%E7%9A%84%E5%8E%86%E5%8F%B2%E8%BF%9B%E7%A8%8B"><span class="nav-number">2.</span> <span class="nav-text">标准化的历史进程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A0%87%E5%87%86%E5%8C%96%E7%9A%84-XMLHttpRequest-%E6%8E%A5%E5%8F%A3"><span class="nav-number">3.</span> <span class="nav-text">标准化的 XMLHttpRequest 接口</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XMLHttpRequestEventTarget"><span class="nav-number">4.</span> <span class="nav-text">XMLHttpRequestEventTarget</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XMLHttpRequest"><span class="nav-number">5.</span> <span class="nav-text">XMLHttpRequest</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#state-%E7%9A%84%E5%8F%98%E5%8C%96%E8%BF%87%E7%A8%8B"><span class="nav-number">6.</span> <span class="nav-text">state 的变化过程</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Event-Handler"><span class="nav-number">7.</span> <span class="nav-text">Event Handler</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XMLHttpRequest-%E5%AF%B9%E8%B1%A1%E6%88%90%E5%91%98%E5%87%BD%E6%95%B0"><span class="nav-number">8.</span> <span class="nav-text">XMLHttpRequest 对象成员函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#XMLHttpRequest-%E5%AF%B9%E8%B1%A1%E6%88%90%E5%91%98%E5%B1%9E%E6%80%A7"><span class="nav-number">9.</span> <span class="nav-text">XMLHttpRequest 对象成员属性</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%93%E6%9D%9F%E8%AF%AD"><span class="nav-number">10.</span> <span class="nav-text">结束语</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">11.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+  <p class="site-author-name" itemprop="name">zhuo guangming</p>
+  <div class="site-description" itemprop="description">善读书可以治愚。</div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">12</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-tags">
+        <span class="site-state-item-count">19</span>
+        <span class="site-state-item-name">标签</span>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/zgm4z" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;zgm4z" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:zgm.developer@gmail.com" title="E-Mail → mailto:zgm.developer@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+
+      </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2020</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">zhuo guangming</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" class="theme-link" rel="noopener" target="_blank">Hexo</a> & <a href="https://muse.theme-next.org/" class="theme-link" rel="noopener" target="_blank">NexT.Muse</a> 强力驱动
+  </div>
+
+        
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+
+  
+
+</body>
+</html>
